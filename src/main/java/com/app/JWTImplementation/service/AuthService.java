@@ -1,5 +1,7 @@
 package com.app.JWTImplementation.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,7 +58,7 @@ public class AuthService implements IAuthService {
             .password(passwordEncoder.encode(request.getPassword()))
             .firstName(request.getFirstName())
             .lastName(request.getLastName())
-            .country(request.getCountry())
+            .createAt(LocalDateTime.now())
             .role(Role.USER)
             .build();
 

@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,13 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.JWTImplementation.dto.UserUpdateDTO;
+import com.app.JWTImplementation.dto.UserDTO;
 import com.app.JWTImplementation.dto.responses.ApiResponse;
 import com.app.JWTImplementation.dto.responses.UserResponse;
 import com.app.JWTImplementation.model.User;
@@ -45,7 +47,8 @@ public class UserController {
                     .password(user.getPassword())
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
-                    .country(user.getCountry())
+                    .createAt(user.getCreateAt())
+                    .updateAt(user.getUpdateAt())
                     .roleName(user.getRole())
                     .build();
 
@@ -75,7 +78,8 @@ public class UserController {
             .password(user.getPassword())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
-            .country(user.getCountry())
+            .createAt(user.getCreateAt())
+            .updateAt(user.getUpdateAt())
             .roleName(user.getRole())
             .build();
 
@@ -90,7 +94,32 @@ public class UserController {
     }
 
     // post - save user
-    // @PostMapping("/new")
+    @PostMapping("/new")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<UserResponse>> newUser(@Valid @RequestBody UserDTO userDetails) {
+        
+        User newUserCreated = userService.saveUser(userDetails);
+
+        UserResponse userResponse = UserResponse.builder()
+            .id(newUserCreated.getId())
+            .username(newUserCreated.getUsername())
+            .password(newUserCreated.getPassword())
+            .firstName(newUserCreated.getFirstName())
+            .lastName(newUserCreated.getLastName())
+            .createAt(newUserCreated.getCreateAt())
+            .updateAt(newUserCreated.getUpdateAt())
+            .roleName(newUserCreated.getRole())
+            .build();
+        
+        ApiResponse<UserResponse> response = new ApiResponse<>(
+            "Success",
+            "User created successfully",
+            userResponse
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+    }
 
     // patch - update partial
     // @PatchMapping("/update-partial/{id}")
@@ -99,7 +128,7 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<ApiResponse<UserResponse>> updateUserById(
         @PathVariable("id") Integer id, 
-        @Valid @RequestBody UserUpdateDTO userDetails) {
+        @Valid @RequestBody UserDTO userDetails) {
     
         User user = userService.updateUserById(id, userDetails);
 
@@ -109,7 +138,7 @@ public class UserController {
             .password(user.getPassword())
             .firstName(user.getFirstName())
             .lastName(user.getLastName())
-            .country(user.getCountry())
+            .updateAt(LocalDateTime.now())
             .roleName(user.getRole())
             .build();
 

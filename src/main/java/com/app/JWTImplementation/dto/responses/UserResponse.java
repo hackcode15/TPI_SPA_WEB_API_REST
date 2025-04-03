@@ -1,5 +1,7 @@
 package com.app.JWTImplementation.dto.responses;
 
+import java.time.LocalDateTime;
+
 import com.app.JWTImplementation.model.User.Role;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +20,8 @@ public class UserResponse {
     private String password;
     private String firstName;
     private String lastName;
-    private String country;
+    private LocalDateTime createAt;
+    private LocalDateTime updateAt;
     private Role roleName;
 
 }

@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.model;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -11,9 +12,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,17 +42,24 @@ public class User implements UserDetails {
     @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(name = "last_name", length = 45)
-    private String lastName;
-
     @Column(name = "first_name", nullable = false, length = 45)
     private String firstName;
 
-    @Column(length = 45)
-    private String country;
+    @Column(name = "last_name", length = 45)
+    private String lastName;
+
+    @Column(name = "create_at", nullable = false, updatable = false, columnDefinition = "DATETIME")
+    private LocalDateTime createAt;
+
+    @Column(name = "updtade_at", columnDefinition = "DATETIME")
+    private LocalDateTime updateAt;
+
+    // Relacion 1 a N
+    @OneToMany(targetEntity = Reserve.class, mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Reserve> reserves;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role_name")
+    @Column(name = "role_name", nullable = false)
     private Role role;
 
     @Override

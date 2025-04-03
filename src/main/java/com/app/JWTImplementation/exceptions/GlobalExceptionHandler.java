@@ -30,6 +30,20 @@ public class GlobalExceptionHandler {
 
     }
 
+    // Excepcion para la entidad ServiceSpa
+    @ExceptionHandler(ServiceSpaNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> hadleServiceSpaNotFoundException(ServiceSpaNotFoundException ex) {
+        
+        ApiResponse<String> error = new ApiResponse<>(
+            "error",
+            ex.getMessage(),
+            null
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+    }
+
     // Excepciones genericas comunes
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {

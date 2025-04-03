@@ -28,8 +28,4 @@ public class RegisterRequest {
     @Size(min = 4, max = 45, message = "Last Name must be between 4 and 45 characters") 
     private String lastName;
 
-    @NotBlank
-    @Size(min = 4, max = 45, message = "Country must be between 4 and 45 characters") 
-    private String country;
-
 }

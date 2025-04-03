@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserUpdateDTO {
+public class UserDTO {
     
     @NotBlank(message = "Username is required")
-    @Size(min = 4, max = 45, message = "Username must be between 3 and 45 characters")
+    @Size(min = 4, max = 45, message = "Username must be between 4 and 45 characters")
     private String username;
     
     @Size(min = 4, max = 100, message = "Password must be between 4 and 100 characters")
@@ -27,6 +27,4 @@ public class UserUpdateDTO {
     @Size(max = 45, message = "First name cannot exceed 45 characters")
     private String firstName;
     
-    @Size(max = 45, message = "Country cannot exceed 45 characters")
-    private String country;
 }

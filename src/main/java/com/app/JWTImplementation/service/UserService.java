@@ -1,12 +1,13 @@
 package com.app.JWTImplementation.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.app.JWTImplementation.dto.UserUpdateDTO;
+import com.app.JWTImplementation.dto.UserDTO;
 import com.app.JWTImplementation.exceptions.UserNotFoundException;
 import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.model.User.Role;
@@ -28,8 +29,19 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User saveUser(User user) {
-        return repository.save(user);    
+    public User saveUser(UserDTO userDetails) {
+
+        User user = User.builder()
+            .username(userDetails.getUsername())
+            .password(passwordEncoder.encode(userDetails.getPassword()))
+            .firstName(userDetails.getFirstName())
+            .lastName(userDetails.getLastName())
+            .createAt(LocalDateTime.now())
+            .role(Role.USER)
+            .build();
+
+        return repository.save(user);
+
     }
 
     @Override
@@ -45,7 +57,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User updateUserById(Integer id, UserUpdateDTO userDetails) {
+    public User updateUserById(Integer id, UserDTO userDetails) {
         
         User user = this.findUserById(id);
 
@@ -57,10 +69,10 @@ public class UserService implements IUserService {
 
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
-        user.setCountry(userDetails.getCountry());
+        user.setUpdateAt(LocalDateTime.now());
         user.setRole(Role.USER);
 
-        return this.saveUser(user);
+        return repository.save(user);
     
     }
     
