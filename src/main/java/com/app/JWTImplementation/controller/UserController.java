@@ -66,7 +66,7 @@ public class UserController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") 
     @ResponseBody
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable("id") Integer id) {
         

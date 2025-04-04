@@ -44,6 +44,34 @@ public class GlobalExceptionHandler {
 
     }
 
+    // Excepcion para la entidad ServiceSpa
+    @ExceptionHandler(ScheduleNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> hadleScheduleNotFoundException(ScheduleNotFoundException ex) {
+        
+        ApiResponse<String> error = new ApiResponse<>(
+            "error",
+            ex.getMessage(),
+            null
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+    }
+
+    // Excepcion para la entidad Reserve
+    @ExceptionHandler(ReserveNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> hadleReserveNotFoundException(ReserveNotFoundException ex) {
+        
+        ApiResponse<String> error = new ApiResponse<>(
+            "error",
+            ex.getMessage(),
+            null
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+    }
+
     // Excepciones genericas comunes
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {

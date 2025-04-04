@@ -14,6 +14,7 @@ public class ReserveDTO {
     private LocalDate reservationDate;
     private String nameUser;
     private String nameServiceSpa;
+    private LocalDate dateReserve;
     private LocalTime hourReserve;
 
 }

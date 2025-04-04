@@ -22,23 +22,19 @@ public class AuthController {
     
     private final AuthService authService;
 
-    /* @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
-    } */
-
-    /* @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
-    } */
-
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         
         // El metodo login del authService retorna un DTO AuthResponse
         AuthResponse response = authService.login(request);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        //return new ResponseEntity<>(response, HttpStatus.OK);
+
+        // nuevo
+        return ResponseEntity.ok()
+            .header("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
+            .header("Access-Control-Allow-Credentials", "true")
+            .body(response);
 
     }
 
