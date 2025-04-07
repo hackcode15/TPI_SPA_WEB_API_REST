@@ -1,6 +1,5 @@
 package com.app.JWTImplementation.model;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -24,37 +23,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "tbl_service_spa")
-public class ServiceSpa {
+@Table(name = "tbl_service_subcategory")
+public class ServiceSubcategory {
     
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Integer id;
-    
+
     @Column(nullable = false, length = 45)
     private String name;
 
-    @Column(length = 150)
-    private String description;
-
-    @Column(name = "duration_minutes", nullable = false)
-    private LocalTime durationMinutes; // Integer
-
-    @Builder.Default
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    // 1 servicio debe pertenecer a una subcategoría (ManyToOne)
+    // 1 subcategoría debe pertenecer a una categoría principal (ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subcategory_id")
-    private ServiceSubcategory serviceSubcategory;
+    @JoinColumn(name = "category_main_id", nullable = false)
+    private ServiceMainCategory serviceMainCategory;
 
-    // 1 servicio puede tener muchos horarios (OneToMany)
-    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Schedule> schedules;
-    
-    // 1 servicio puede estar en muchas reservas (OneToMany)
-    @OneToMany(mappedBy = "serviceSpa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reserve> reserves;
+    // 1 subcategoría puede tener muchos servicios (OneToMany)
+    @OneToMany(mappedBy = "serviceSubcategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceSpa> services;
 
 }

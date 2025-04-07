@@ -1,6 +1,5 @@
 package com.app.JWTImplementation.service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +36,6 @@ public class ScheduleService implements IScheduleService {
     public void deleteById(Integer id) {
         Schedule schedule = this.findScheduleById(id);
         repository.delete(schedule);    
-    }
-
-    public List<Schedule> findSchedulesByDate(LocalDate date) {
-        return repository.findByDate(date);
     }
     
 }

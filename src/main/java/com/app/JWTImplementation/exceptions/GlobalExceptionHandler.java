@@ -30,7 +30,35 @@ public class GlobalExceptionHandler {
 
     }
 
-    // Excepcion para la entidad ServiceSpa
+    // Excepcion para la entidad ServiceMainCategory
+    @ExceptionHandler(ServiceMainCategoryNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> hadleServiceMainCategoryNotFoundException(ServiceMainCategoryNotFoundException ex) {
+        
+        ApiResponse<String> error = new ApiResponse<>(
+            "error",
+            ex.getMessage(),
+            null
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+    }
+
+    // ServiceSubcategory
+    @ExceptionHandler(ServiceSubcategoryNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> hadleServiceSubcategoryNotFoundException(ServiceSubcategoryNotFoundException ex) {
+        
+        ApiResponse<String> error = new ApiResponse<>(
+            "error",
+            ex.getMessage(),
+            null
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+    }
+
+    // ServiceSpa
     @ExceptionHandler(ServiceSpaNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> hadleServiceSpaNotFoundException(ServiceSpaNotFoundException ex) {
         
@@ -44,7 +72,7 @@ public class GlobalExceptionHandler {
 
     }
 
-    // Excepcion para la entidad ServiceSpa
+    // Schedule
     @ExceptionHandler(ScheduleNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> hadleScheduleNotFoundException(ScheduleNotFoundException ex) {
         
@@ -58,7 +86,7 @@ public class GlobalExceptionHandler {
 
     }
 
-    // Excepcion para la entidad Reserve
+    // Reserve
     @ExceptionHandler(ReserveNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> hadleReserveNotFoundException(ReserveNotFoundException ex) {
         
@@ -93,24 +121,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 
     }
-
-    // Maneja errores de validación
-    /* @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<?>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        List<String> errors = ex.getBindingResult()
-            .getFieldErrors()
-            .stream()
-            .map(error -> error.getField() + ": " + error.getDefaultMessage())
-            .collect(Collectors.toList());
-            
-        ApiResponse<?> response = new ApiResponse<>(
-            "error",
-            "Validation failed",
-            errors
-        );
-        
-        return ResponseEntity.badRequest().body(response);
-    } */
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<String>> hadleGlobalException(Exception ex) {

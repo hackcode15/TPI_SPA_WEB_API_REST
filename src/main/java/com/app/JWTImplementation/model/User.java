@@ -4,15 +4,17 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -48,19 +50,22 @@ public class User implements UserDetails {
     @Column(name = "last_name", length = 45)
     private String lastName;
 
-    @Column(name = "create_at", nullable = false, updatable = false, columnDefinition = "DATETIME")
+    @CreationTimestamp
+    @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
 
-    @Column(name = "updtade_at", columnDefinition = "DATETIME")
+    @UpdateTimestamp
+    @Column(name = "update_at", nullable = false)
     private LocalDateTime updateAt;
 
-    // Relacion 1 a N
-    @OneToMany(targetEntity = Reserve.class, mappedBy = "user", fetch = FetchType.LAZY)
+    // relacion con reserva
+    @OneToMany(targetEntity = Reserve.class, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserve> reserves;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", nullable = false)
-    private Role role;
+    private Role role = Role.USER;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
