@@ -59,6 +59,7 @@ public class User implements UserDetails {
     private LocalDateTime updateAt;
 
     // relacion con reserva
+    // Al elimiar un Usuario se borrara sus reservas asociadas
     @OneToMany(targetEntity = Reserve.class, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserve> reserves;
 

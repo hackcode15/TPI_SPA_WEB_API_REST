@@ -1,4 +1,4 @@
-package com.app.JWTImplementation.dto.responses;
+package com.app.JWTImplementation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthResponse {
-
-    // Lectura
-
-    private String status;
-    private String message;
-    private String token;
+public class ServiceSubcategoryDTO {
     
+    // Lectura
+    
+    private Integer id;
+    private String name;
+
 }

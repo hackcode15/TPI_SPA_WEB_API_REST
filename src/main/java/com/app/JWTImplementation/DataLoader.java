@@ -1,4 +1,4 @@
-package com.app.JWTImplementation;
+/* package com.app.JWTImplementation;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.app.JWTImplementation.dto.GenerationSchedulesDTOs.ScheduleConfigDTO;
 import com.app.JWTImplementation.dto.GenerationSchedulesDTOs.TimeSlotDTO;
 import com.app.JWTImplementation.exceptions.ScheduleNotFoundException;
-import com.app.JWTImplementation.exceptions.ServiceSpaNotFoundException;
 import com.app.JWTImplementation.exceptions.UserNotFoundException;
 import com.app.JWTImplementation.model.Reserve;
 import com.app.JWTImplementation.model.Schedule;
@@ -64,7 +63,7 @@ public class DataLoader implements CommandLineRunner {
         //generateSchedulesFromJson();
 
         // GENERATION RESERVE
-        generateReserve();
+        //generateReserve();
 
     }
 
@@ -88,7 +87,16 @@ public class DataLoader implements CommandLineRunner {
             .role(Role.USER)
             .build(); 
 
-        repoUser.saveAll(List.of(diego, vale));
+        // USER
+        User lidia = User.builder()
+            .username("lidia")
+            .password(passwordEncoder.encode("1984"))
+            .firstName("Lidia Celeste")
+            .lastName("Salinas")
+            .role(Role.USER)
+            .build();
+
+        repoUser.saveAll(List.of(diego, vale, lidia));
 
     }
 
@@ -157,7 +165,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(masajes)
             .name("Anti-stress")
             .description(null)
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -165,7 +173,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(masajes)
             .name("Descontracturantes")
             .description(null)
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -174,7 +182,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(belleza)
             .name("Lifting de pestaña")
             .description(null)
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -182,7 +190,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(belleza)
             .name("Depilación facial")
             .description(null)
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -191,7 +199,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(tratamientosFaciales)
             .name("Punta de Diamante")
             .description("Microexfocilación")
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -199,7 +207,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(tratamientosFaciales)
             .name("Crio frecuencia facial")
             .description("Produce el 'SHOCK TERMICO'")
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -208,7 +216,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(tratamientosCorporales)
             .name("VelaSlim")
             .description("Reducción de la circunferencia corporal y la celulitis")
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -216,7 +224,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(tratamientosCorporales)
             .name("DermoHealth")
             .description("moviliza los distintos tejidos de la piel y estimula la microcirculación, generando un drenaje linfático")
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -225,7 +233,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(otrosGrupales)
             .name("Hidromasajes")
             .description(null)
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -233,7 +241,7 @@ public class DataLoader implements CommandLineRunner {
             .serviceSubcategory(otrosGrupales)
             .name("Yoga")
             .description(null)
-            .durationMinutes(LocalTime.of(1, 0))
+            .durationMinutes(60)
             .isActive(true)
             .build();
 
@@ -255,6 +263,12 @@ public class DataLoader implements CommandLineRunner {
 
     }
 
+    // Genera bien los horarios ingresados en el JSON - comprobado en postman
+    // Pero se ven afectados en la BD
+    // por ejemplo si los primeros son 8 a 9, 9 a 10 y 10 a 11, se los salta y empieza desde el cuarto osea desde el 11 a 12
+    // al final agrega tres horarios mas para ocupar esos espacios
+    // por ejemplo si el horario final en el json es de 15 a 16
+    // agrega tres mas de 16 a 17, 17 a 18 y 18 a 19
     private void generateSchedulesFromJson() {
         
         try {
@@ -300,9 +314,15 @@ public class DataLoader implements CommandLineRunner {
                     LocalTime starTime = LocalTime.parse(slot.getStartTime(), timeFormatter);
                     LocalTime endTime = LocalTime.parse(slot.getEndTime(), timeFormatter);
 
+                    //System.out.println("Hora inicio: " + starTime);
+                    //System.out.println("Hora fin: " + endTime); 
+
                     // Crear el horario con fecha y hora
                     LocalDateTime startDateTime = LocalDateTime.of(currentDate, starTime);
                     LocalDateTime endDateTime = LocalDateTime.of(currentDate, endTime);
+
+                    //System.out.println("Fecha/hora inicio: " + startDateTime);
+                    //System.out.println("Fecha/hora fin: " + endDateTime); 
 
                     // Creación y adición del horario
                     Schedule schedule = Schedule.builder()
@@ -333,17 +353,17 @@ public class DataLoader implements CommandLineRunner {
 
     private void generateReserve() {
     
-        User vale = repoUser.findUserByUsername("vale")
+        User lidia = repoUser.findUserByUsername("lidia")
             .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con username vale"));
 
-        List<ServiceSpa> serviceList = repoServiceSpa.findByName("Depilación facial");
+        List<ServiceSpa> serviceList = repoServiceSpa.findByName("Anti-stress");
         ServiceSpa serviceSpa = serviceList.get(0);
 
-        Schedule schedule = repoSchedule.findById(2)
+        Schedule schedule = repoSchedule.findById(1)
             .orElseThrow(() -> new ScheduleNotFoundException("Schedule no encontrado"));
 
         Reserve reserve = Reserve.builder()
-            .user(vale)
+            .user(lidia)
             .serviceSpa(serviceSpa)
             .schedule(schedule)
             .dateReserve(LocalDateTime.now())
@@ -354,4 +374,4 @@ public class DataLoader implements CommandLineRunner {
 
     }
 
-}
+} */

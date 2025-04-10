@@ -1,6 +1,5 @@
 package com.app.JWTImplementation.model;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -38,22 +37,24 @@ public class ServiceSpa {
     private String description;
 
     @Column(name = "duration_minutes", nullable = false)
-    private LocalTime durationMinutes; // Integer
+    private Integer durationMinutes; // Integer
 
     @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
-    // 1 servicio debe pertenecer a una subcategoría (ManyToOne)
+    // 1 servicio debe pertenecer a una subcategoría
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subcategory_id")
     private ServiceSubcategory serviceSubcategory;
 
-    // 1 servicio puede tener muchos horarios (OneToMany)
+    // Al elimiar un ServiceSpa se borrara sus horarios asociados
+    // 1 servicio puede tener muchos horarios
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules;
     
-    // 1 servicio puede estar en muchas reservas (OneToMany)
+    // Al elimiar un ServiceSpa se borrara sus reservas asociados
+    // 1 servicio puede estar en muchas reservas
     @OneToMany(mappedBy = "serviceSpa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserve> reserves;
 

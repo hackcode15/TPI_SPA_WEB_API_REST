@@ -39,6 +39,7 @@ public class ServiceSubcategory {
     private ServiceMainCategory serviceMainCategory;
 
     // 1 subcategoría puede tener muchos servicios (OneToMany)
+    // Al elimiar un ServiceSubcategory se borrara sus ServiceSpa asociados
     @OneToMany(mappedBy = "serviceSubcategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServiceSpa> services;
 

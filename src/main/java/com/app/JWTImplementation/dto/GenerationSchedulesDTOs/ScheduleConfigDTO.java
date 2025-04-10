@@ -1,4 +1,4 @@
-package com.app.JWTImplementation.dto.GenerationSchedulesDTOs;
+package com.app.JWTImplementation.dto.generationSchedulesDTOs;
 
 import java.util.List;
 

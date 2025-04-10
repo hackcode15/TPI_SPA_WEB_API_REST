@@ -38,6 +38,7 @@ public class ServiceMainCategory {
     private Boolean isGroupService = false;
 
     // 1 categoría principal puede tener muchas subcategorías (OneToMany)
+    // Al elimiar un ServiceMainCategory se borrara sus ServiceSubcategory asociados
     @OneToMany(mappedBy = "serviceMainCategory", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServiceSubcategory> subcategories;
 

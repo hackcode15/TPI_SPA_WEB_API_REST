@@ -30,12 +30,12 @@ import lombok.NoArgsConstructor;
 public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime startDatetime;
     
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime endDatetime;
     
     @Builder.Default
@@ -56,6 +56,7 @@ public class Schedule {
     private ServiceSpa service;
     
     // 1 horario puede estar en muchas reservas (OneToMany)
+    // Al elimiar un Horario se borrara sus Rerservas asociados
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserve> reserves;
 

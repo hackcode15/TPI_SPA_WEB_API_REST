@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginRequest {
 
+    // Creacion
+
     // Validar entrada de datos
 
     @NotBlank // El campo username no debe estar vacio
