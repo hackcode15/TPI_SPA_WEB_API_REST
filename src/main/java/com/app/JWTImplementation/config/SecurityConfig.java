@@ -33,8 +33,15 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // nuevo
             .authorizeHttpRequests(authRequest -> authRequest
-                .requestMatchers("/auth/**").permitAll()
-                .anyRequest().authenticated())
+                    .requestMatchers(
+                            "/auth/**",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/swagger-ui.html",
+                            "/swagger-resources/**",
+                            "/webjars/**")
+                    .permitAll()
+                    .anyRequest().authenticated())
             .sessionManagement(sessionManager -> sessionManager 
                   .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authProvider)
@@ -43,7 +50,7 @@ public class SecurityConfig {
                 
     }
 
-    // Añade este método en SecurityConfig.java // nuevo
+    // Añade este método en SecurityConfig.java nuevo
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();

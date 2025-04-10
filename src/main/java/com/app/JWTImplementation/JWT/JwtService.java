@@ -21,8 +21,10 @@ public class JwtService {
     
     //@Value("${security.jwt.secret-key}")
     
-    @Value("${JWT_SECRET_KEY}")
-    private String SECRET_KEY;
+    /*@Value("${JWT_SECRET_KEY}")
+    private String SECRET_KEY;*/
+
+    private final String SECRET_KEY = "K0pZ9IVd9FxCtVfK8DSZU0/bqEnzkxt1bJ9xqKRaqk0=";
 
     private Date getExpiration(String token) {
         return getClaim(token, Claims::getExpiration);
