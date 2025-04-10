@@ -1,30 +1,26 @@
-[ 
-  {
-    "serviceName": "Anti-stress",
-    "slots": [
-      { "startTime": "08:00", "endTime": "09:00" },
-      { "startTime": "10:00", "endTime": "11:00" }
-    ]
-  },
-  {
-    "serviceName": "Descontracturantes",
-    "slots": [
-      { "startTime": "09:00", "endTime": "10:00" },
-      { "startTime": "11:00", "endTime": "12:00" }
-    ]
-  },
-  {
-    "serviceName": "Lifting de pestaña",
-    "slots": [
-      { "startTime": "12:00", "endTime": "13:00" },
-      { "startTime": "14:00", "endTime": "15:00" }
-    ]
-  },
-  {
-    "serviceName": "Depilación Facial",
-    "slots": [
-      { "startTime": "13:00", "endTime": "14:00" },
-      { "startTime": "15:00", "endTime": "16:00" }
-    ]
-  }
-]
+{
+  "day": "2025-04-15",
+  "services": [
+    {
+      "category": "MASAJE",
+      "serviceName": "Anti-stress",
+      "duration": 60,
+      "slots": [
+        { "startTime": "08:00", "available": true },
+        { "startTime": "10:00", "available": true },
+        { "startTime": "14:00", "available": true }
+      ]
+    },
+    {
+      "category": "BELLEZA",
+      "serviceName": "Lifting de pestaña",
+      "duration": 60,
+      "slots": [
+        { "startTime": "08:00", "available": true },
+        { "startTime": "10:00", "available": true },
+        { "startTime": "14:00", "available": true },
+        { "startTime": "16:00", "available": true }
+      ]
+    }
+  ]
+}

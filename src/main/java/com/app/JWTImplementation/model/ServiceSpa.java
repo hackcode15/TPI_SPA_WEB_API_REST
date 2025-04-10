@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "tbl_service_spa")
+@Table(name = "tbl_service")
 public class ServiceSpa {
     
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,25 +37,28 @@ public class ServiceSpa {
     private String description;
 
     @Column(name = "duration_minutes", nullable = false)
-    private Integer durationMinutes; // Integer
+    private Integer durationMinutes;
 
     @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
-    // 1 servicio debe pertenecer a una subcategoría
+    // 1 servicio debe pertenecer a una categoría
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subcategory_id")
-    private ServiceSubcategory serviceSubcategory;
+    @JoinColumn(name = "category_id")
+    private ServiceCategory category;
 
     // Al elimiar un ServiceSpa se borrara sus horarios asociados
     // 1 servicio puede tener muchos horarios
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules;
-    
+
+    /*
+    Redundante
     // Al elimiar un ServiceSpa se borrara sus reservas asociados
     // 1 servicio puede estar en muchas reservas
     @OneToMany(mappedBy = "serviceSpa", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserve> reserves;
+    */
 
 }

@@ -30,7 +30,7 @@ public class ServiceSpaController {
     @ResponseBody
     public ResponseEntity<ApiResponse<List<ServiceSpaDTO>>> getAllServicesSpa() {
         
-        List<ServiceSpa> servicesSpa = service.findAllServiceSpas();
+        List<ServiceSpa> servicesSpa = service.findAllServicesSpa();
 
         List<ServiceSpaDTO> servicesSpaDTO = servicesSpa.stream()
             .map(serviceSpa -> {

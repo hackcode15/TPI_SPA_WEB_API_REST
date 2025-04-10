@@ -19,7 +19,7 @@ public class ServiceSpaService implements IServiceSpaService {
     private ServiceSpaRepository repository;
 
     @Override
-    public List<ServiceSpa> findAllServiceSpas() {
+    public List<ServiceSpa> findAllServicesSpa() {
         return repository.findAll();    
     }
 

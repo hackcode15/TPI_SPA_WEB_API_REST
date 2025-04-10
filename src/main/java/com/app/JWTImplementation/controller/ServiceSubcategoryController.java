@@ -12,27 +12,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.app.JWTImplementation.dto.ServiceSubcategoryDTO;
+import com.app.JWTImplementation.dto.ServiceCategoryDTO;
 import com.app.JWTImplementation.dto.responses.ApiResponse;
-import com.app.JWTImplementation.model.ServiceSubcategory;
-import com.app.JWTImplementation.service.ServiceSubcategoryService;
+import com.app.JWTImplementation.model.ServiceCategory;
+import com.app.JWTImplementation.service.ServiceCategoryService;
 
 @RestController
 @RequestMapping("/api/service-subcategory")
 public class ServiceSubcategoryController {
     
-    @Autowired private ServiceSubcategoryService service;
+    @Autowired private ServiceCategoryService service;
 
     @GetMapping
     @ResponseBody
-    public ResponseEntity<ApiResponse<List<ServiceSubcategoryDTO>>> getAllServiceSubcategories() {
+    public ResponseEntity<ApiResponse<List<ServiceCategoryDTO>>> getAllServiceSubcategories() {
         
-        List<ServiceSubcategory> serviceSubcategories = service.findAllServiceSubcategories();
+        List<ServiceCategory> serviceSubcategories = service.findAllServiceCategories();
 
-        List<ServiceSubcategoryDTO> serviceSubcategoryDTO = serviceSubcategories.stream()
+        List<ServiceCategoryDTO> serviceCategoryDTO = serviceSubcategories.stream()
             .map(serviceSubcategory -> {
                 
-                ServiceSubcategoryDTO dto = ServiceSubcategoryDTO.builder()
+                ServiceCategoryDTO dto = ServiceCategoryDTO.builder()
                     .id(serviceSubcategory.getId())
                     .name(serviceSubcategory.getName())
                     .build();
@@ -41,10 +41,10 @@ public class ServiceSubcategoryController {
 
             }).collect(Collectors.toList());
 
-        ApiResponse<List<ServiceSubcategoryDTO>> response = new ApiResponse<>(
+        ApiResponse<List<ServiceCategoryDTO>> response = new ApiResponse<>(
             "Success",
             "Servicies Subcategories retrived succesfully",
-            serviceSubcategoryDTO
+                serviceCategoryDTO
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -53,19 +53,19 @@ public class ServiceSubcategoryController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<ApiResponse<ServiceSubcategoryDTO>> getServiceSubcategory(@PathVariable("id") Integer id) {
+    public ResponseEntity<ApiResponse<ServiceCategoryDTO>> getServiceSubcategory(@PathVariable("id") Integer id) {
         
-        ServiceSubcategory serviceSubcategory = service.findServiceSubcategoryById(id);
+        ServiceCategory serviceCategory = service.findServiceCategoryById(id);
 
-        ServiceSubcategoryDTO serviceSubcategoryDTO = ServiceSubcategoryDTO.builder()
-            .id(serviceSubcategory.getId())
-            .name(serviceSubcategory.getName())
+        ServiceCategoryDTO serviceCategoryDTO = ServiceCategoryDTO.builder()
+            .id(serviceCategory.getId())
+            .name(serviceCategory.getName())
             .build();
 
-        ApiResponse<ServiceSubcategoryDTO> response = new ApiResponse<>(
+        ApiResponse<ServiceCategoryDTO> response = new ApiResponse<>(
             "Success",
             "Service Subcategory successfully recovered",
-            serviceSubcategoryDTO
+                serviceCategoryDTO
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);

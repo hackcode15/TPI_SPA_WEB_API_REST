@@ -30,20 +30,6 @@ public class GlobalExceptionHandler {
 
     }
 
-    // Excepcion para la entidad ServiceMainCategory
-    @ExceptionHandler(ServiceMainCategoryNotFoundException.class)
-    public ResponseEntity<ApiResponse<String>> hadleServiceMainCategoryNotFoundException(ServiceMainCategoryNotFoundException ex) {
-        
-        ApiResponse<String> error = new ApiResponse<>(
-            "error",
-            ex.getMessage(),
-            null
-        );
-
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-
-    }
-
     // ServiceSubcategory
     @ExceptionHandler(ServiceSubcategoryNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> hadleServiceSubcategoryNotFoundException(ServiceSubcategoryNotFoundException ex) {

@@ -26,19 +26,19 @@ public interface ReserveRepository extends JpaRepository<Reserve, Integer> {
      * JOIN services s ON r.service_id = s.id
      * JOIN schedules sc ON r.schedule_id = sc.id
      */
+
     @Query("""
-        SELECT
-            r.id as id,
-            r.dateReserve as dateReserve,
-            CONCAT(u.firstName, ', ', u.lastName) as userFullName,
-            s.name as serviceName,
-            sc.startDatetime as scheduleStart,
-            sc.endDatetime as scheduleEnd,
-            r.status as status
-        FROM Reserve r
-        JOIN r.user u
-        JOIN r.serviceSpa s
-        JOIN r.schedule sc
+    SELECT
+        r.id as id,
+        r.dateReserve as dateReserve,
+        CONCAT(u.firstName, ' ', u.lastName) as userFullName,
+        sc.service.name as serviceName,
+        sc.startDatetime as scheduleStart,
+        sc.endDatetime as scheduleEnd,
+        r.status as status
+    FROM Reserve r
+    JOIN r.user u
+    JOIN r.schedule sc
     """)
     List<ReserveProjection> findAllReservesProjection();
 

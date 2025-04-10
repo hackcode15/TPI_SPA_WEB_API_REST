@@ -49,11 +49,15 @@ public class Reserve {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
-    
+
+    /*
+    Eliminar la relacion directa con ServiceSpa
+    (Ya viene a traves de Schedule)
     // 1 reserva pertenece a un servicio (ManyToOne)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceSpa serviceSpa;
+    */
 
     public enum StatusReserve {
         CONFIRMED,

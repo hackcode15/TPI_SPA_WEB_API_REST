@@ -7,7 +7,7 @@ import com.app.JWTImplementation.model.ServiceSpa;
 
 public interface IServiceSpaService {
     
-    public List<ServiceSpa> findAllServiceSpas();
+    public List<ServiceSpa> findAllServicesSpa();
     public ServiceSpa saveServiceSpa(ServiceSpa serviceSpa);
     public ServiceSpa findServiceSpaById(Integer id);
     public ServiceSpa updateServiceSpa(Integer id, ServiceSpaDTO serviceSpaDetails);

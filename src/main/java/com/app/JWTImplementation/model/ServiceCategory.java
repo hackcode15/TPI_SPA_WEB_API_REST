@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "tbl_service_main_category")
-public class ServiceMainCategory {
+@Table(name = "tbl_service_category")
+public class ServiceCategory {
     
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
@@ -34,12 +34,12 @@ public class ServiceMainCategory {
     private String description;
 
     @Builder.Default
-    @Column(name = "is_group_service")
+    @Column(name = "is_group_service", nullable = false)
     private Boolean isGroupService = false;
 
-    // 1 categoría principal puede tener muchas subcategorías (OneToMany)
-    // Al elimiar un ServiceMainCategory se borrara sus ServiceSubcategory asociados
-    @OneToMany(mappedBy = "serviceMainCategory", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServiceSubcategory> subcategories;
+    // 1 subcategoría puede tener muchos servicios (OneToMany)
+    // Al elimiar un ServiceSubcategory se borrara sus ServiceSpa asociados
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ServiceSpa> services;
 
 }

@@ -9,10 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServiceSubcategoryDTO {
+public class ServiceCategoryDTO {
     
     // Lectura
-    
+
+    // Modificar para la nueva version
     private Integer id;
     private String name;
 
