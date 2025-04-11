@@ -1,5 +1,5 @@
 /*
- package com.app.JWTImplementation;
+package com.app.JWTImplementation;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -12,16 +12,15 @@ import java.util.List;
 import com.app.JWTImplementation.dto.generationSchedulesDTOs.DailyScheduleDTO;
 import com.app.JWTImplementation.dto.generationSchedulesDTOs.ServiceScheduleDTO;
 import com.app.JWTImplementation.dto.generationSchedulesDTOs.TimeSlotAvailabilityDTO;
+import com.app.JWTImplementation.exceptions.ScheduleNotFoundException;
+import com.app.JWTImplementation.exceptions.UserNotFoundException;
+import com.app.JWTImplementation.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.app.JWTImplementation.model.Schedule;
-import com.app.JWTImplementation.model.ServiceSpa;
-import com.app.JWTImplementation.model.ServiceCategory;
-import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.model.User.Role;
 
 import com.app.JWTImplementation.repository.ReserveRepository;
@@ -35,18 +34,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    @Autowired private UserRepository repoUser;
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private ServiceCategoryRepository repoServiceCategory;
-    @Autowired private ServiceSpaRepository repoServiceSpa;
-    @Autowired private ScheduleRepository repoSchedule;
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private ReserveRepository repoReserve;
+    @Autowired
+    private UserRepository repoUser;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ServiceCategoryRepository repoServiceCategory;
+    @Autowired
+    private ServiceSpaRepository repoServiceSpa;
+    @Autowired
+    private ScheduleRepository repoSchedule;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private ReserveRepository repoReserve;
 
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        
+
         // GENERATION USERS
         //generateUsers();
 
@@ -62,33 +68,33 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void generateUsers() {
-        
+
         // ADMIN
         User diego = User.builder()
-            .username("diego")
-            .password(passwordEncoder.encode("2004"))
-            .firstName("Diego Elias")
-            .lastName("Gomez")
-            .role(Role.ADMIN)
-            .build();
+                .username("diego")
+                .password(passwordEncoder.encode("2004"))
+                .firstName("Diego Elias")
+                .lastName("Gomez")
+                .role(Role.ADMIN)
+                .build();
 
         // USER
         User vale = User.builder()
-            .username("vale")
-            .password(passwordEncoder.encode("2016"))
-            .firstName("Valentina Lara")
-            .lastName("Gomez")
-            .role(Role.USER)
-            .build(); 
+                .username("vale")
+                .password(passwordEncoder.encode("2016"))
+                .firstName("Valentina Lara")
+                .lastName("Gomez")
+                .role(Role.USER)
+                .build();
 
         // USER
         User lidia = User.builder()
-            .username("lidia")
-            .password(passwordEncoder.encode("1984"))
-            .firstName("Lidia Celeste")
-            .lastName("Salinas")
-            .role(Role.USER)
-            .build();
+                .username("lidia")
+                .password(passwordEncoder.encode("1984"))
+                .firstName("Lidia Celeste")
+                .lastName("Salinas")
+                .role(Role.USER)
+                .build();
 
         repoUser.saveAll(List.of(diego, vale, lidia));
 
@@ -131,13 +137,13 @@ public class DataLoader implements CommandLineRunner {
                 .build();
 
         repoServiceCategory.saveAll(
-            List.of(
-                masajes, 
-                belleza, 
-                tratamientosFaciales, 
-                tratamientosCorporales,
-                otrosGrupales
-            )
+                List.of(
+                        masajes,
+                        belleza,
+                        tratamientosFaciales,
+                        tratamientosCorporales,
+                        otrosGrupales
+                )
         );
         // ------------------------------------------------------------------------------------
 
@@ -230,18 +236,18 @@ public class DataLoader implements CommandLineRunner {
                 .build();
 
         repoServiceSpa.saveAll(
-            List.of(
-                antiStress,
-                descontracturantes,
-                liftingDePestana,
-                depelicacionFacial,
-                puntaDeDiamante,
-                crioFrecuenciaFacial,
-                velaSlim,
-                dermoHealth,
-                hidromasajes,
-                yoga
-            )
+                List.of(
+                        antiStress,
+                        descontracturantes,
+                        liftingDePestana,
+                        depelicacionFacial,
+                        puntaDeDiamante,
+                        crioFrecuenciaFacial,
+                        velaSlim,
+                        dermoHealth,
+                        hidromasajes,
+                        yoga
+                )
         );
         // ------------------------------------------------------------------------------------
 
@@ -280,7 +286,7 @@ public class DataLoader implements CommandLineRunner {
                 // Busca el servicio por nombre
                 List<ServiceSpa> matchingServices = repoServiceSpa.findByName(serviceSchedule.getServiceName());
 
-                if(matchingServices.isEmpty()) {
+                if (matchingServices.isEmpty()) {
                     System.err.println("Servicio no encontrado: " + serviceSchedule.getServiceName());
                     continue;
                 }
@@ -335,29 +341,36 @@ public class DataLoader implements CommandLineRunner {
 
     }
 
-    */
-/*private void generateReserve() {
-    
-        User lidia = repoUser.findUserByUsername("lidia")
-            .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con username vale"));
+    private void generateReserve() {
 
-        List<ServiceSpa> serviceList = repoServiceSpa.findByName("Anti-stress");
-        ServiceSpa serviceSpa = serviceList.get(0);
+        User lidia = repoUser.findUserByUsername("vale")
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con username vale"));
 
         Schedule schedule = repoSchedule.findById(1)
-            .orElseThrow(() -> new ScheduleNotFoundException("Schedule no encontrado"));
+                .orElseThrow(() -> new ScheduleNotFoundException("Schedule no encontrado"));
+
+        if(schedule.getCurrentCapacity() >= schedule.getMaxCapacity()) {
+            throw new RuntimeException("No hay espacio disponible para la reserva");
+        }
 
         Reserve reserve = Reserve.builder()
-            .user(lidia)
-            .serviceSpa(serviceSpa)
-            .schedule(schedule)
-            .dateReserve(LocalDateTime.now())
-            .status(StatusReserve.CONFIRMED)
-            .build();
+                .user(lidia)
+                .schedule(schedule)
+                .status(Reserve.StatusReserve.CONFIRMED)
+                .build();
 
-        repoReserve.save(reserve);
+        Reserve savedReserve = repoReserve.save(reserve);
 
-    }*//*
+        schedule.setCurrentCapacity(schedule.getCurrentCapacity() + 1);
+        repoSchedule.save(schedule);
+
+        System.out.println("Reserva creada para el servicio: "
+                + savedReserve.getService().getName());
+        System.out.println("Horario: "
+                + savedReserve.getSchedule().getStartDatetime() + " a "
+                + savedReserve.getSchedule().getEndDatetime());
+
+    }
 
 
 }

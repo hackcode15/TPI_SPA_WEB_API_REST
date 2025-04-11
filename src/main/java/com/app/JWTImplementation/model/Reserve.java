@@ -2,19 +2,9 @@ package com.app.JWTImplementation.model;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -58,6 +48,22 @@ public class Reserve {
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceSpa serviceSpa;
     */
+    // Metodo helper para acceder al servicio indirectamente
+    public ServiceSpa getService() {
+        return this.schedule.getService();
+    }
+
+    // Validación de integridad
+    @PrePersist
+    @PreUpdate
+    private void validate() {
+        if (schedule == null) {
+            throw new IllegalStateException("La reserva debe tener un horario asociado");
+        }
+        if (schedule.getCurrentCapacity() >= schedule.getMaxCapacity()) {
+            throw new IllegalStateException("No hay capacidad disponible en este horario");
+        }
+    }
 
     public enum StatusReserve {
         CONFIRMED,

@@ -104,5 +104,9 @@ public class User implements UserDetails {
         ADMIN,
         USER
     }
+
+    // CUSTOMER
+    // ADMIN
+    // DEVELOPER
     
 }
