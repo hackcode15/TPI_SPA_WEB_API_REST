@@ -13,8 +13,9 @@ public class ServiceCategoryDTO {
     
     // Lectura
 
-    // Modificar para la nueva version
     private Integer id;
     private String name;
+    private String description;
+    private Boolean isGroupService;
 
 }

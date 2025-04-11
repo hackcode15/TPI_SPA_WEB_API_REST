@@ -32,7 +32,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
+    @GetMapping("/list")
     @ResponseBody
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         

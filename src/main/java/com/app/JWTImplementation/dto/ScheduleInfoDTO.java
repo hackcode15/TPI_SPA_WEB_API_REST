@@ -1,15 +1,19 @@
 package com.app.JWTImplementation.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import lombok.Builder;
-import lombok.Data;
-
 @Data
 @Builder
-public class ScheduleDTO {
-    
+@AllArgsConstructor
+@NoArgsConstructor
+public class ScheduleInfoDTO {
+
     private Integer id;
     private LocalDate startDate;
     private LocalTime startTime;
@@ -18,5 +22,6 @@ public class ScheduleDTO {
     private Integer maxCapacity;
     private Integer currentCapacity;
     private Boolean isActive;
+    private String service;
 
 }

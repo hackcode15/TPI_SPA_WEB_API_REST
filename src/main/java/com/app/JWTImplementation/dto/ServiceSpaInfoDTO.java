@@ -9,10 +9,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ServiceSpaDTO {
+public class ServiceSpaInfoDTO {
+
+    // Forma de mostrar la informacion
+
     private Integer id;
     private String name;
     private String description;
     private Integer durationMinutes;
     private Boolean isActive;
+    private String category; // ej: MASAJE
+    private String type; // ej: Individual
+    
 }

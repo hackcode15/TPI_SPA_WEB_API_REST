@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.app.JWTImplementation.dto.ScheduleInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,39 @@ public class ScheduleController {
     @Autowired
     private ScheduleService service;
 
-    @GetMapping
+    @GetMapping("/list-info")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<List<ScheduleInfoDTO>>> getAllSchedulesWithEntities() {
+
+        List<ScheduleInfoDTO> schedulesInfoDTO = service.findAllSchedulesWithEntities();
+
+        ApiResponse<List<ScheduleInfoDTO>> response = new ApiResponse<>(
+            "Success",
+            "Schedules All Info retrived succesfully",
+            schedulesInfoDTO
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/info/{id}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<ScheduleInfoDTO>> getScheduleByIdWithEntity(@PathVariable("id") Integer id) {
+
+        ScheduleInfoDTO scheduleInfoDTO = service.findScheduleByIdWithEntity(id);
+
+        ApiResponse<ScheduleInfoDTO> response = new ApiResponse<>(
+            "Success",
+            "Schedule All Info successfully recovered",
+            scheduleInfoDTO
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/list")
     @ResponseBody
     public ResponseEntity<ApiResponse<List<ScheduleDTO>>> getAllSchedules() {
         
@@ -88,34 +121,34 @@ public class ScheduleController {
     }
 
     // Get by Date
-    @GetMapping("/date/{date}")
+    @GetMapping("/info-date/{date}")
     @ResponseBody
-    public ResponseEntity<ApiResponse<List<ScheduleDTO>>> getSchedulesByDate(@PathVariable("date") LocalDate date) {
-        
-        List<Schedule> schedules = service.findSchedulesByDate(date);
+    public ResponseEntity<ApiResponse<List<ScheduleInfoDTO>>> getSchedulesByDate(@PathVariable("date") LocalDate date) {
 
-        List<ScheduleDTO> schedulesDTO = schedules.stream()
-            .map(schedule -> {
-                
-                ScheduleDTO dto = ScheduleDTO.builder()
-                    .id(schedule.getId())
-                    .startDate(schedule.getStartDatetime().toLocalDate())
-                    .startTime(schedule.getStartDatetime().toLocalTime())
-                    .endDate(schedule.getEndDatetime().toLocalDate())
-                    .endTime(schedule.getStartDatetime().toLocalTime())
-                    .maxCapacity(schedule.getMaxCapacity())
-                    .currentCapacity(schedule.getCurrentCapacity())
-                    .isActive(schedule.getIsActive())
-                    .build();
+        List<ScheduleInfoDTO> schedulesInfoDTO = service.findSchedulesByDate(date);
 
-                return dto;
+        ApiResponse<List<ScheduleInfoDTO>> response = new ApiResponse<>(
+                "Succes",
+                "Schedules of date retrived succesfully",
+                schedulesInfoDTO
+        );
 
-            }).collect(Collectors.toList());
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
-        ApiResponse<List<ScheduleDTO>> response = new ApiResponse<>(
-            "Success",
-            "Schedules retrived succesfully",
-            schedulesDTO
+    }
+
+    @GetMapping("/service/{idService}/date/{date}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<List<ScheduleInfoDTO>>> getSchedulesByServiceAndDate(
+            @PathVariable("idService") Integer idService,
+            @PathVariable("date") LocalDate date) {
+
+        List<ScheduleInfoDTO> schedulesInfoDTO = service.findSchedulesOfServiceByDate(date, idService);
+
+        ApiResponse<List<ScheduleInfoDTO>> response = new ApiResponse<>(
+                "Sucess",
+                "Schedules of service and date retrived succesfully",
+                schedulesInfoDTO
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
