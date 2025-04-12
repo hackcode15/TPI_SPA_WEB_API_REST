@@ -1,0 +1,26 @@
+{
+  "day": "2025-04-15",
+  "services": [
+    {
+      "category": "MASAJE",
+      "serviceName": "Anti-stress",
+      "duration": 60,
+      "slots": [
+        { "startTime": "08:00", "available": true },
+        { "startTime": "10:00", "available": true },
+        { "startTime": "14:00", "available": true }
+      ]
+    },
+    {
+      "category": "BELLEZA",
+      "serviceName": "Lifting de pestaña",
+      "duration": 60,
+      "slots": [
+        { "startTime": "08:00", "available": true },
+        { "startTime": "10:00", "available": true },
+        { "startTime": "14:00", "available": true },
+        { "startTime": "16:00", "available": true }
+      ]
+    }
+  ]
+}
