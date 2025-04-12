@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  jwt-app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: "jdbc:mysql://jwt-db:3306/bd_api_rest_tpi_spa?createDatabaseIfNotExist=true&serverTimezone=UTC"
+      DB_USER: "root"
+      DB_PASS: "Esteban7"
+      JWT_SECRET_KEY: "K0pZ9IVd9FxCtVfK8DSZU0/bqEnzkxt1bJ9xqKRaqk0="
+    depends_on:
+      jwt-db:
+        condition: service_healthy
+    networks:
+      - jwt-network
+  jwt-db:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: "Esteban7"
+      MYSQL_DATABASE: "bd_api_rest_tpi_spa"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 10
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - jwt-network
+volumes:
+  mysql_data:
+networks:
+  jwt-network:
+    driver: bridge
