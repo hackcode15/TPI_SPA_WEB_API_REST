@@ -8,12 +8,10 @@ com\app\JWTImplementation\dto\projection\ServiceSpaProjection.class
 com\app\JWTImplementation\dto\ReserveInfoDTO.class
 com\app\JWTImplementation\dto\request\LoginRequest.class
 com\app\JWTImplementation\controller\AuthController.class
-com\app\JWTImplementation\config\CorsConfig.class
 com\app\JWTImplementation\dto\ScheduleDTO$ScheduleDTOBuilder.class
 com\app\JWTImplementation\repository\ServiceSpaRepository.class
 com\app\JWTImplementation\dto\request\LoginRequest$LoginRequestBuilder.class
 com\app\JWTImplementation\dto\responses\ApiResponse$ApiResponseBuilder.class
-com\app\JWTImplementation\config\CorsConfig$1.class
 com\app\JWTImplementation\dto\responses\AuthResponse$AuthResponseBuilder.class
 com\app\JWTImplementation\model\User$UserBuilder.class
 com\app\JWTImplementation\exceptions\ServiceSubcategoryNotFoundException.class
@@ -60,7 +58,6 @@ com\app\JWTImplementation\controller\UserController.class
 com\app\JWTImplementation\repository\ScheduleRepository.class
 com\app\JWTImplementation\service\UserService.class
 com\app\JWTImplementation\controller\ServiceSpaController.class
-com\app\JWTImplementation\DataLoader.class
 com\app\JWTImplementation\JwtImplementationApplication.class
 com\app\JWTImplementation\dto\generationSchedulesDTOs\TimeSlotAvailabilityDTO.class
 com\app\JWTImplementation\repository\UserRepository.class

@@ -57,24 +57,12 @@ public class AuthController {
             }
     )
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
-        
-        // El metodo login del authService retorna un DTO AuthResponse
-        AuthResponse response = authService.login(request);
-
-        //return new ResponseEntity<>(response, HttpStatus.OK);
-
-        // nuevo
-        return ResponseEntity.ok()
-            .header("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
-            .header("Access-Control-Allow-Credentials", "true")
-            .body(response);
-
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        
-        // El metodo register del authService retorna un DTO AuthResponse
+
         AuthResponse response = authService.register(request);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);

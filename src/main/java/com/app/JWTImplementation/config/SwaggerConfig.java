@@ -35,7 +35,7 @@ import org.springframework.http.HttpHeaders;
                 ),
                 @Server(
                         description = "PROD SERVER",
-                        url = "http://spawebservice:8080"
+                        url = "http://18.231.220.109"
                 )
         },
         security = @SecurityRequirement(
