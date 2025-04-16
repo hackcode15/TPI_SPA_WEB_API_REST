@@ -16,9 +16,9 @@ public class ServiceSpaInfoDTO {
     private Integer id;
     private String name;
     private String description;
+    private String category;
     private Integer durationMinutes;
     private Boolean isActive;
-    private String category; // ej: MASAJE
-    private String type; // ej: Individual
-    
+    private String type;
+
 }

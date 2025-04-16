@@ -34,17 +34,17 @@ public class Schedule {
     
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime startDatetime;
-    
+
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime endDatetime;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer currentCapacity = 0;
     
     @Builder.Default
     @Column(nullable = false)
     private Integer maxCapacity = 1;
-    
-    @Builder.Default
-    @Column(nullable = false)
-    private Integer currentCapacity = 0;
     
     @Builder.Default
     @Column(name = "is_active")

@@ -59,7 +59,7 @@ public class AuthService implements IAuthService {
             .firstName(request.getFirstName())
             .lastName(request.getLastName())
             .createAt(LocalDateTime.now())
-            .role(Role.USER)
+            .role(Role.CUSTOMER)
             .build();
 
         userRepository.save(user);

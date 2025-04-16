@@ -37,7 +37,7 @@ public class UserService implements IUserService {
             .firstName(userDetails.getFirstName())
             .lastName(userDetails.getLastName())
             .createAt(LocalDateTime.now())
-            .role(Role.USER)
+            .role(Role.CUSTOMER)
             .build();
 
         return repository.save(user);
@@ -70,7 +70,7 @@ public class UserService implements IUserService {
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
         user.setUpdateAt(LocalDateTime.now());
-        user.setRole(Role.USER);
+        user.setRole(Role.CUSTOMER);
 
         return repository.save(user);
     

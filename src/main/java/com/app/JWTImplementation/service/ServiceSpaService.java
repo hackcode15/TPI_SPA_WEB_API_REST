@@ -44,8 +44,10 @@ public class ServiceSpaService implements IServiceSpaService {
 
         serviceSpa.setName(serviceSpaDetails.getName());
         serviceSpa.setDescription(serviceSpaDetails.getDescription());
+        serviceSpa.setCategoryName(serviceSpaDetails.getCategory());
         serviceSpa.setDurationMinutes(serviceSpaDetails.getDurationMinutes());
         serviceSpa.setIsActive(serviceSpaDetails.getIsActive());
+        serviceSpa.setIsGroupService(serviceSpaDetails.getIsGroupService());
 
         return repository.save(serviceSpa);
 
@@ -69,9 +71,9 @@ public class ServiceSpaService implements IServiceSpaService {
                             .id(service.getId())
                             .name(service.getName())
                             .description(service.getDescription())
+                            .category(service.getCategoryName())
                             .durationMinutes(service.getDurationMinutes())
                             .isActive(service.getIsActive())
-                            .category(service.getCategoryName())
                             .type(service.getIsGroup() ? "Grupal" : "individual")
                             .build();
 
@@ -92,9 +94,9 @@ public class ServiceSpaService implements IServiceSpaService {
                 .id(service.getId())
                 .name(service.getName())
                 .description(service.getDescription())
+                .category(service.getCategoryName())
                 .durationMinutes(service.getDurationMinutes())
                 .isActive(service.getIsActive())
-                .category(service.getCategoryName())
                 .type(service.getIsGroup() ? "Grupal" : "individual")
                 .build();
 

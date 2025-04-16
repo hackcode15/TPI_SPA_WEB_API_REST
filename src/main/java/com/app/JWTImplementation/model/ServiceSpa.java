@@ -36,6 +36,9 @@ public class ServiceSpa {
     @Column(length = 150)
     private String description;
 
+    @Column(name = "category_name", nullable = false, length = 45)
+    private String categoryName;
+
     @Column(name = "duration_minutes", nullable = false)
     private Integer durationMinutes;
 
@@ -43,22 +46,13 @@ public class ServiceSpa {
     @Column(name = "is_active")
     private Boolean isActive = true;
 
-    // 1 servicio debe pertenecer a una categoría
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private ServiceCategory category;
+    @Builder.Default
+    @Column(name = "is_group_service")
+    private Boolean isGroupService = false;
 
     // Al elimiar un ServiceSpa se borrara sus horarios asociados
     // 1 servicio puede tener muchos horarios
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules;
-
-    /*
-    Redundante
-    // Al elimiar un ServiceSpa se borrara sus reservas asociados
-    // 1 servicio puede estar en muchas reservas
-    @OneToMany(mappedBy = "serviceSpa", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Reserve> reserves;
-    */
 
 }
