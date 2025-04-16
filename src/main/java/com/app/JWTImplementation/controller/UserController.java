@@ -136,7 +136,7 @@ public class UserController {
     @ResponseBody
     @Operation(
             summary = "Nuevo Usuario",
-            description = "Creación de un nuevo usuario",
+            description = "Creación de un nuevo Usuario",
             tags = {"Usuario"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Solicitud de creación con usuario, contraseña, nombre y apellido. Rol de usuario por defecto",
