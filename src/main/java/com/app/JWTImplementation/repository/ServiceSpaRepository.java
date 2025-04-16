@@ -15,7 +15,7 @@ import com.app.JWTImplementation.model.ServiceSpa;
 public interface ServiceSpaRepository extends JpaRepository<ServiceSpa, Integer> {
 
     // Busca el servicio por su nombre
-    List<ServiceSpa> findByName(String name);
+    List<ServiceSpa> findByNameAndCategoryName(String name, String categoryName);
 
     // Necesario para acceder a campos de la entidad relacionada
     @Query("""
@@ -23,12 +23,11 @@ public interface ServiceSpaRepository extends JpaRepository<ServiceSpa, Integer>
         s.id as id,
         s.name as name,
         s.description as description,
+        s.categoryName as categoryName,
         s.durationMinutes as durationMinutes,
         s.isActive as isActive,
-        sc.name as categoryName,
-        sc.isGroupService as isGroup
+        s.isGroupService as isGroup
     FROM ServiceSpa s
-    JOIN s.category sc
     """)
     List<ServiceSpaProjection> findAllServiceSpaWhitEntities();
 
@@ -37,12 +36,11 @@ public interface ServiceSpaRepository extends JpaRepository<ServiceSpa, Integer>
         s.id as id,
         s.name as name,
         s.description as description,
+        s.categoryName as categoryName,
         s.durationMinutes as durationMinutes,
         s.isActive as isActive,
-        sc.name as categoryName,
-        sc.isGroupService as isGroup
+        s.isGroupService as isGroup
     FROM ServiceSpa s
-    JOIN s.category sc
     WHERE s.id = :id
     """)
     Optional<ServiceSpaProjection> findServiceSpaWhitEntity(@Param("id") Integer id);

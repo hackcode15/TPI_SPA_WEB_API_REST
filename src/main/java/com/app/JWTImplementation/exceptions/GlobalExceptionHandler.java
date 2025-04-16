@@ -30,20 +30,6 @@ public class GlobalExceptionHandler {
 
     }
 
-    // ServiceSubcategory
-    @ExceptionHandler(ServiceSubcategoryNotFoundException.class)
-    public ResponseEntity<ApiResponse<String>> hadleServiceSubcategoryNotFoundException(ServiceSubcategoryNotFoundException ex) {
-        
-        ApiResponse<String> error = new ApiResponse<>(
-            "error",
-            ex.getMessage(),
-            null
-        );
-
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
-
-    }
-
     // ServiceSpa
     @ExceptionHandler(ServiceSpaNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> hadleServiceSpaNotFoundException(ServiceSpaNotFoundException ex) {

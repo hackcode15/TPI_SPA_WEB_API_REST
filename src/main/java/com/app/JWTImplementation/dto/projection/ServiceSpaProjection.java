@@ -5,8 +5,8 @@ public interface ServiceSpaProjection {
     Integer getId();
     String getName();
     String getDescription();
+    String getCategoryName();
     Integer getDurationMinutes();
     Boolean getIsActive();
-    String getCategoryName();
     Boolean getIsGroup();
 }

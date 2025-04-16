@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.app.JWTImplementation.dto.projection.ScheduleProjection;
@@ -75,5 +76,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     WHERE sc.id = :id
     """)
     Optional<ScheduleProjection> findScheduleByIdWithEntity(@Param("id") Integer id);
+
+    Optional<Schedule> findByServiceNameAndStartDatetime(String serviceName, LocalDateTime startDatetime);
 
 }

@@ -66,7 +66,7 @@ public class User implements UserDetails {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "role_name", nullable = false)
-    private Role role = Role.USER;
+    private Role role = Role.CUSTOMER;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -101,8 +101,9 @@ public class User implements UserDetails {
     }
 
     public enum Role {
+        CUSTOMER,
         ADMIN,
-        USER
+        DEVELOPER
     }
 
     // CUSTOMER

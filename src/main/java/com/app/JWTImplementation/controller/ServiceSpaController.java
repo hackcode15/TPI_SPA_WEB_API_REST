@@ -73,8 +73,10 @@ public class ServiceSpaController {
                             .id(serviceSpa.getId())
                             .name(serviceSpa.getName())
                             .description(serviceSpa.getDescription())
+                            .category(serviceSpa.getCategoryName())
                             .durationMinutes(serviceSpa.getDurationMinutes())
                             .isActive(serviceSpa.getIsActive())
+                            .isGroupService(serviceSpa.getIsGroupService())
                             .build();
 
                     return dto;
@@ -101,8 +103,10 @@ public class ServiceSpaController {
                 .id(serviceSpa.getId())
                 .name(serviceSpa.getName())
                 .description(serviceSpa.getDescription())
+                .category(serviceSpa.getCategoryName())
                 .durationMinutes(serviceSpa.getDurationMinutes())
                 .isActive(serviceSpa.getIsActive())
+                .isGroupService(serviceSpa.getIsGroupService())
                 .build();
 
         ApiResponse<ServiceSpaDTO> response = new ApiResponse<>(
@@ -127,8 +131,10 @@ public class ServiceSpaController {
                 .id(serviceSpaUpdate.getId())
                 .name(serviceSpaUpdate.getName())
                 .description(serviceSpaUpdate.getDescription())
+                .category(serviceSpaUpdate.getCategoryName())
                 .durationMinutes(serviceSpaUpdate.getDurationMinutes())
                 .isActive(serviceSpaUpdate.getIsActive())
+                .type(serviceSpaUpdate.getIsGroupService() ? "Grupal" : "individual")
                 .build();
 
         ApiResponse<ServiceSpaInfoDTO> response = new ApiResponse<>(
