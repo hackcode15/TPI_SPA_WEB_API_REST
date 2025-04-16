@@ -4,17 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.app.JWTImplementation.dto.ServiceSpaDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.app.JWTImplementation.dto.ServiceSpaInfoDTO;
 import com.app.JWTImplementation.dto.responses.ApiResponse;
@@ -23,13 +20,31 @@ import com.app.JWTImplementation.service.ServiceSpaService;
 
 @RestController
 @RequestMapping("/api/service-spa")
+@Tag(name = "Servicio", description = "Controlador para los Servicios")
 public class ServiceSpaController {
 
     @Autowired
     private ServiceSpaService service;
 
-    @GetMapping("/list-info")
+    @GetMapping("/list") // /list-info
     @ResponseBody
+    @Operation(
+            summary = "Ver todos los Servicios con su información completa",
+            description = "Lista todos los servicios del Spa con toda su informacion y la de sus relaciones",
+            tags = {"Servicio"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Servicio Spa Toda la información recuperada correctamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ServiceSpaInfoDTO.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<List<ServiceSpaInfoDTO>>> getAllServicesSpaInfo() {
 
         List<ServiceSpaInfoDTO> servicesSpa = service.findAllServicesWhitEntities();
@@ -44,15 +59,32 @@ public class ServiceSpaController {
 
     }
 
-    @GetMapping("/info/{id}")
+    @GetMapping("/{id}") // /info/{id}
     @ResponseBody
+    @Operation(
+            summary = "Mostrar información completa del servicio por su ID",
+            description = "Busca el Servicio por su ID y lo muestra con toda su informacion y la de sus relaciones",
+            tags = {"Servicio"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ServiceSpaInfoDTO.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<ServiceSpaInfoDTO>> getServiceSpa(@PathVariable("id") Integer id) {
 
         ServiceSpaInfoDTO serviceSpaInfoDTO = service.findServiceWithEntityById(id);
 
         ApiResponse<ServiceSpaInfoDTO> response = new ApiResponse<>(
                 "Success",
-                "Service Spa All Info successfully recovered",
+                "Servicio Spa Toda la información recuperada correctamente",
                 serviceSpaInfoDTO
         );
 
@@ -60,8 +92,26 @@ public class ServiceSpaController {
 
     }
 
+    /*
     @GetMapping("/list")
     @ResponseBody
+    @Operation(
+            summary = "Ver todos los Servicios",
+            description = "Lista todos los servicios (solo su información)",
+            tags = {"Servicio"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Servicios Spa recuperados con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ServiceSpaDTO.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<List<ServiceSpaDTO>>> getAllServicesSpa() {
 
         List<ServiceSpa> servicesSpa = service.findAllServicesSpa();
@@ -92,9 +142,28 @@ public class ServiceSpaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+     */
 
+    /*
     @GetMapping("/{id}")
     @ResponseBody
+    @Operation(
+            summary = "Mostrar Servicio por su ID",
+            description = "Busca el Servicio por su ID y muestra solo su información",
+            tags = {"Servicio"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "El Service Spa se recuperó con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ServiceSpaDTO.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<ServiceSpaDTO>> getServiceSpaById(@PathVariable("id") Integer id) {
 
         ServiceSpa serviceSpa = service.findServiceSpaById(id);
@@ -118,9 +187,92 @@ public class ServiceSpaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+    */
+
+    // post
+    @PostMapping("/new")
+    @ResponseBody
+    @Operation(
+            summary = "Nuevo Servicio",
+            description = "Creación de un nuevo servicio",
+            tags = {"Servicio"},
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Solicitud de creacion el nombre, descripción, categoria, la duración en minutos, si esta activo y si es de tipo grupal o individual",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = ServiceSpaDTO.class
+                            )
+                    )
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "201",
+                            description = "Servicio Spa creado con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ServiceSpaInfoDTO.class
+                                    )
+                            )
+                    )
+            }
+    )
+    public ResponseEntity<ApiResponse<ServiceSpaInfoDTO>> newServiceSpa(@RequestBody ServiceSpaDTO serviceSpaDetails) {
+
+        ServiceSpa createdServiceSpa = ServiceSpa.builder()
+                .name(serviceSpaDetails.getName())
+                .description(serviceSpaDetails.getDescription())
+                .categoryName(serviceSpaDetails.getCategory())
+                .durationMinutes(serviceSpaDetails.getDurationMinutes())
+                .isActive(serviceSpaDetails.getIsActive())
+                .isGroupService(serviceSpaDetails.getIsGroupService())
+                .build();
+
+        ServiceSpa newServiceSpa = service.saveServiceSpa(createdServiceSpa);
+
+        ServiceSpaInfoDTO serviceSpaInfoDTO = service.findServiceWithEntityById(newServiceSpa.getId());
+
+        ApiResponse<ServiceSpaInfoDTO> response = new ApiResponse<>(
+                "Success",
+                "Service Spa created successfully",
+                serviceSpaInfoDTO
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+    }
 
     @PutMapping("/update/{id}")
     @ResponseBody
+    @Operation(
+            summary = "Editar un Servicio por su ID",
+            description = "Actualiza todos los datos del Servicio por su ID si existe",
+            tags = {"Servicio"},
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Solicitidud de modificación con el id, nombre, descripción, categoria, la duración en minutos, si esta activo y si es de tipo grupal o individual ",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = ServiceSpaDTO.class
+                            )
+                    )
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "201",
+                            description = "Servicio Spa actualizado con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ServiceSpaInfoDTO.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<ServiceSpaInfoDTO>> updateServiceSpa(
             @PathVariable("id") Integer id,
             @RequestBody ServiceSpaDTO serviceSpaDetails) {
@@ -148,6 +300,23 @@ public class ServiceSpaController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Operation(
+            summary = "Borrar Servicio",
+            description = "Elimina el Servicio por ID",
+            tags = {"Servicio"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Servicio Spa eliminado con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ApiResponse.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<String>> deleteServiceSpa(@PathVariable("id") Integer id) {
 
         service.deleteServiceSpaById(id);
