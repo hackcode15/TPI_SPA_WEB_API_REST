@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -14,28 +13,23 @@ import org.springframework.http.HttpHeaders;
 @OpenAPIDefinition(
         info = @Info(
                 title = "API SPA WEB",
-                description = "Descripcion del Spa",
-                termsOfService = "www.google.com.ar",
+                description = "Esta API permite gestionar los usuarios, servicios, horarios y reservaciones de un Spa",
+                //termsOfService = "www.google.com.ar",
                 version = "1.0.0",
                 contact = @Contact(
-                        name = "Diego Gomez",
-                        url = "https://github.com/hackcode15",
-                        email = "taysonm895@gmail.com"
-                ),
-                license = @License(
-                        name = "Standard Software Use License for SpaWeb",
-                        url = "https://www.pildorasinformaticas.es",
-                        identifier = "123.456.789"
+                        name = "Repositorio - GitHub",
+                        url = "https://github.com/hackcode15/TPI_SPA_WEB_API_REST"
+                        //email = "taysonm895@gmail.com"
                 )
         ),
         servers = {
                 @Server(
-                        description = "DEV SERVER",
+                        description = "SERVIDOR DE DESARROLLO",
                         url = "http://localhost:8080"
                 ),
                 @Server(
-                        description = "PROD SERVER",
-                        url = "http://spawebservice:8080"
+                        description = "SERVIDOR DE PRODUCCION",
+                        url = "http://18.231.220.109"
                 )
         },
         security = @SecurityRequirement(
@@ -51,6 +45,4 @@ import org.springframework.http.HttpHeaders;
         scheme = "bearer",
         bearerFormat = "JWT"
 )
-public class SwaggerConfig {
-
-}
+public class SwaggerConfig { }

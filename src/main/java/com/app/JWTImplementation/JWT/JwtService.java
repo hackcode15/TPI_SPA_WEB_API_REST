@@ -20,7 +20,8 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
     
     //@Value("${security.jwt.secret-key}")
-    
+
+    // video 1:17:44 -> arreglar porque no generar .jar correctamente
     @Value("${JWT_SECRET_KEY}")
     private String SECRET_KEY;
 

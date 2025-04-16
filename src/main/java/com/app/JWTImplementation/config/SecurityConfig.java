@@ -39,7 +39,9 @@ public class SecurityConfig {
                             "/v3/api-docs/**",
                             "/swagger-ui.html",
                             "/swagger-resources/**",
-                            "/webjars/**")
+                            "/webjars/**",
+                            "/error"
+                    )
                     .permitAll()
                     .anyRequest().authenticated())
             .sessionManagement(sessionManager -> sessionManager 
@@ -50,15 +52,15 @@ public class SecurityConfig {
                 
     }
 
-    // Añade este método en SecurityConfig.java nuevo
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        
+        configuration.setMaxAge(3600L); // Cache de 1 hora para OPTIONS
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
