@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
+@Tag(name = "Usuario", description = "Controlador para los Usuarios")
 public class UserController {
     
     @Autowired
@@ -34,6 +38,23 @@ public class UserController {
 
     @GetMapping("/list")
     @ResponseBody
+    @Operation(
+            summary = "Ver todos los usuarios",
+            description = "Lista todos los usuarios con todos su datos",
+            tags = {"Usuario"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = UserResponse.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         
         List<User> users = userService.findAllUsers();
@@ -68,6 +89,23 @@ public class UserController {
 
     @GetMapping("/{id}") 
     @ResponseBody
+    @Operation(
+            summary = "Mostrar Usuario por su ID",
+            description = "Busca el usuario por el ID y muestra toda su información",
+            tags = {"Usuario"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Usuario recuperado con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = UserResponse.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable("id") Integer id) {
         
         User user = userService.findUserById(id);
@@ -96,6 +134,33 @@ public class UserController {
     // post - save user
     @PostMapping("/new")
     @ResponseBody
+    @Operation(
+            summary = "Nuevo Usuario",
+            description = "Creación de un nuevo usuario",
+            tags = {"Usuario"},
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Solicitud de creación con usuario, contraseña, nombre y apellido. Rol de usuario por defecto",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = UserDTO.class
+                            )
+                    )
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "201",
+                            description = "Usuario creado exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = UserResponse.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<UserResponse>> newUser(@Valid @RequestBody UserDTO userDetails) {
         
         User newUserCreated = userService.saveUser(userDetails);
@@ -126,6 +191,33 @@ public class UserController {
 
     @PutMapping("/update/{id}")
     @ResponseBody
+    @Operation(
+            summary = "Editar Usuario por su ID",
+            description = "Actualiza todos los datos del Usuario por ID si existe",
+            tags = {"Usuario"},
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Solicitud de modificacion con id, usuario, contraseña, nombre y apellido",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    implementation = UserDTO.class
+                            )
+                    )
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Usuario actualizado con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = UserResponse.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<UserResponse>> updateUserById(
         @PathVariable("id") Integer id, 
         @Valid @RequestBody UserDTO userDetails) {
@@ -143,7 +235,7 @@ public class UserController {
             .build();
 
         ApiResponse<UserResponse> response = new ApiResponse<>(
-            "Seccess",
+            "Success", // modificado
             "Updated user successfully",
             userResponse
         );
@@ -153,6 +245,23 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Operation(
+            summary = "Borrar Usuario",
+            description = "ELimina el usuario por ID",
+            tags = {"Usuario"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Usuario eliminado con éxito",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ApiResponse.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<String>> deleteUserById(@PathVariable("id") Integer id) {
     
         userService.deleteUserById(id);
