@@ -8,7 +8,7 @@ import com.app.JWTImplementation.model.Reserve;
 public interface IReserveService {
  
     public List<Reserve> findAllReserves();
-    public Reserve saveReserve(Reserve reserve);
+    public Reserve saveReserve(ReserveDTO reserve);
     public Reserve updateReserve(Integer id, ReserveDTO reserveDetails);
     public Reserve findReserveById(Integer id);
     public void deleteReserveById(Integer id);

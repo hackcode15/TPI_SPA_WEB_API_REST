@@ -1,8 +1,12 @@
 package com.app.JWTImplementation.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import com.app.JWTImplementation.model.Schedule;
+import com.app.JWTImplementation.model.ServiceSpa;
+import com.app.JWTImplementation.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -44,5 +48,15 @@ public interface ReserveRepository extends JpaRepository<Reserve, Integer> {
     WHERE r.id = :id
     """)
     Optional<ReserveProjection> findReserveProjectionById(@Param("id") Integer id);
+
+    @Query("SELECT COUNT(r) > 0 FROM Reserve r " +
+            "WHERE r.user.id = :userId " +
+            "AND r.schedule.id = :scheduleId")
+    boolean existsByUserAndSchedule(
+            @Param("userId") Integer userId,
+            @Param("scheduleId") Integer scheduleId);
+
+    @Query("SELECT r FROM Reserve r WHERE r.user.id = :userId AND r.schedule.id = :scheduleId")
+    List<Reserve> findByUserIdAndScheduleId(@Param("userId") Integer userId, @Param("scheduleId") Integer scheduleId);
 
 }

@@ -72,6 +72,20 @@ public class GlobalExceptionHandler {
 
     }
 
+    // Reservas invalidas
+    @ExceptionHandler(InvalidReservationException.class)
+    public ResponseEntity<ApiResponse<String>> handleInvalidReservationException(InvalidReservationException ex) {
+
+        ApiResponse<String> error = new ApiResponse<>(
+                "error",
+                ex.getMessage(),
+                null
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
+    }
+
     // Excepciones genericas comunes
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {

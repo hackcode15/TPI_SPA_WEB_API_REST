@@ -13,6 +13,7 @@ import com.app.JWTImplementation.dto.generationSchedulesDTOs.DailyScheduleDTO;
 import com.app.JWTImplementation.dto.generationSchedulesDTOs.ServiceScheduleDTO;
 import com.app.JWTImplementation.dto.generationSchedulesDTOs.TimeSlotAvailabilityDTO;
 import com.app.JWTImplementation.exceptions.ScheduleNotFoundException;
+import com.app.JWTImplementation.exceptions.ServiceSpaNotFoundException;
 import com.app.JWTImplementation.exceptions.UserNotFoundException;
 import com.app.JWTImplementation.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,10 +58,7 @@ public class DataLoader implements CommandLineRunner {
         //generatesServicesSpa();
 
         // GENERATION SCHEDULES
-        //generateSchedulesFromJson();
-
-        // GENERATION RESERVE
-        //generateReserve();
+        //generateTestSchedulesForDemo();
 
     }
 
@@ -215,181 +213,25 @@ public class DataLoader implements CommandLineRunner {
 
     }
 
-    // Genera bien los horarios ingresados en el JSON - comprobado en postman
-    // Pero se ven afectados en la BD
-    // por ejemplo si los primeros son 8 a 9, 9 a 10 y 10 a 11, se los salta y empieza desde el cuarto osea desde el 11 a 12
-    // al final agrega tres horarios mas para ocupar esos espacios
-    // por ejemplo si el horario final en el json es de 15 a 16
-    // agrega tres mas de 16 a 17, 17 a 18 y 18 a 19
-    private void generateSchedulesFromJson() {
-        try {
-            // Lectura del JSON
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("jsonSchedules/Schedules1.json");
+    private void generateTestSchedulesForDemo() {
 
-            if (inputStream == null) {
-                System.err.println("JSON no encontrado");
-                return;
-            }
+        ServiceSpa service = repoServiceSpa.findByName("Anti-stress")
+                .orElseThrow(() -> new ServiceSpaNotFoundException("Service not found whit name: Anti-Stress"));
 
-            // Deserializar JSON a DailyScheduleDTO
-            DailyScheduleDTO dailySchedule = objectMapper.readValue(inputStream, DailyScheduleDTO.class);
+        // Horario de ejemplo para hoy + 3 dias (cumple validacion)
+        LocalDateTime start = LocalDateTime.now().plusDays(3).withHour(14).withMinute(0);
 
-            // Parsear la fecha del día
-            LocalDate scheduleDate = LocalDate.parse(dailySchedule.getDay());
-            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-            List<Schedule> schedulesToSave = new ArrayList<>();
-
-            // Para cada servicio en el JSON
-            for (ServiceScheduleDTO serviceSchedule : dailySchedule.getServices()) {
-                // Busca el servicio por nombre y categoría (usando categoryName de ServiceSpa)
-                List<ServiceSpa> matchingServices = repoServiceSpa.findByNameAndCategoryName(
-                        serviceSchedule.getServiceName(),
-                        serviceSchedule.getCategory()
-                );
-
-                if (matchingServices.isEmpty()) {
-                    System.err.println("Servicio no encontrado: " + serviceSchedule.getServiceName() +
-                            " en categoría " + serviceSchedule.getCategory());
-                    continue;
-                }
-
-                ServiceSpa service = matchingServices.get(0);
-
-                // Para cada slot definido en el JSON
-                for (TimeSlotAvailabilityDTO slot : serviceSchedule.getSlots()) {
-                    if (!slot.isAvailable()) {
-                        continue; // Saltar slots no disponibles
-                    }
-
-                    // Parsear la hora de inicio
-                    LocalTime startTime = LocalTime.parse(slot.getStartTime(), timeFormatter);
-
-                    // Usar la duración del servicio de la entidad ServiceSpa
-                    LocalTime endTime = startTime.plusMinutes(service.getDurationMinutes());
-
-                    // Crear el horario con fecha y hora
-                    LocalDateTime startDateTime = LocalDateTime.of(scheduleDate, startTime);
-                    LocalDateTime endDateTime = LocalDateTime.of(scheduleDate, endTime);
-
-                    // Usar isGroupService de ServiceSpa para determinar la capacidad
-                    int maxCapacity = service.getIsGroupService() ? 10 : 1;
-
-                    // Creación y adición del horario
-                    Schedule schedule = Schedule.builder()
-                            .service(service)
-                            .startDatetime(startDateTime)
-                            .endDatetime(endDateTime)
-                            .currentCapacity(0)
-                            .maxCapacity(maxCapacity)
-                            .isActive(true)
-                            .build();
-
-                    schedulesToSave.add(schedule);
-                }
-            }
-
-            // Guardar todos los horarios en la base de datos
-            repoSchedule.saveAll(schedulesToSave);
-            System.out.println("Horarios generados correctamente");
-            System.out.println("Se generaron " + schedulesToSave.size() + " horarios para el día " + dailySchedule.getDay());
-
-        } catch (Exception e) {
-            System.err.println("Error al leer el archivo JSON de horarios: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void generateReserve() {
-        // ---------------------------------------------------------------------------
-        // reserva de Diego de un servicio individual - Anti-stress
-        User diego = repoUser.findUserByUsername("diego")
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con username diego"));
-
-        // Buscar horario para el servicio Anti-stress el 2025-04-20 a las 08:00
-        // Mejor buscar por servicio y fecha/hora en lugar de por ID fijo
-        LocalDateTime startTime = LocalDateTime.of(2025, 4, 20, 8, 0);
-        Schedule schedule = repoSchedule.findByServiceNameAndStartDatetime("Anti-stress", startTime)
-                .orElseThrow(() -> new ScheduleNotFoundException("Schedule no encontrado"));
-
-        if(schedule.getCurrentCapacity() >= schedule.getMaxCapacity()) {
-            throw new RuntimeException("No hay espacio disponible para la reserva");
-        }
-
-        Reserve reserve = Reserve.builder()
-                .dateReserve(LocalDateTime.now())
-                .status(Reserve.StatusReserve.CONFIRMED)
-                .user(diego)
-                .schedule(schedule)
+        Schedule testSchedule = Schedule.builder()
+                .service(service)
+                .startDatetime(start)
+                .endDatetime(start.plusMinutes(service.getDurationMinutes()))
+                .maxCapacity(1)
+                .currentCapacity(0)
+                .isActive(true)
                 .build();
 
-        Reserve savedReserve = repoReserve.save(reserve);
+        repoSchedule.save(testSchedule);
 
-        schedule.setCurrentCapacity(schedule.getCurrentCapacity() + 1);
-        repoSchedule.save(schedule);
-
-        System.out.println("Reserva creada de " + savedReserve.getUser().getFirstName());
-        System.out.println("Para el servicio " + savedReserve.getSchedule().getService().getName());
-        System.out.println("El dia " + savedReserve.getSchedule().getStartDatetime().toLocalDate());
-
-        // ---------------------------------------------------------------------------
-        // reservas para un servicio grupal - Yoga
-        // CLIENTE 1
-        User vale = repoUser.findUserByUsername("vale")
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con username vale"));
-
-        // Buscar horario para el servicio Yoga el 2025-04-20 a las 14:00
-        LocalDateTime startTime2 = LocalDateTime.of(2025, 4, 20, 14, 0);
-        Schedule schedule2 = repoSchedule.findByServiceNameAndStartDatetime("Yoga", startTime2)
-                .orElseThrow(() -> new ScheduleNotFoundException("Schedule no encontrado"));
-
-        if(schedule2.getCurrentCapacity() >= schedule2.getMaxCapacity()) {
-            throw new RuntimeException("No hay espacio disponible para la reserva");
-        }
-
-        Reserve reserve2 = Reserve.builder()
-                .dateReserve(LocalDateTime.now())
-                .status(Reserve.StatusReserve.CONFIRMED)
-                .user(vale)
-                .schedule(schedule2)
-                .build();
-
-        Reserve savedReserve2 = repoReserve.save(reserve2);
-
-        // Incrementamos la capacidad actual
-        schedule2.setCurrentCapacity(schedule2.getCurrentCapacity() + 1);
-        repoSchedule.save(schedule2);
-
-        System.out.println("Reserva creada de " + savedReserve2.getUser().getFirstName());
-        System.out.println("Para el servicio " + savedReserve2.getSchedule().getService().getName());
-        System.out.println("El dia " + savedReserve2.getSchedule().getStartDatetime().toLocalDate());
-
-        // ---------------------------------------------------------------------------
-        // reservas para un servicio grupal - Yoga
-        // CLIENTE 2
-        User lidia = repoUser.findUserByUsername("lidia")
-                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado con username lidia"));
-
-        if(schedule2.getCurrentCapacity() >= schedule2.getMaxCapacity()) {
-            throw new RuntimeException("No hay espacio disponible para la reserva");
-        }
-
-        Reserve reserve3 = Reserve.builder()
-                .dateReserve(LocalDateTime.now())
-                .status(Reserve.StatusReserve.CONFIRMED)
-                .user(lidia)
-                .schedule(schedule2) // mismo horario
-                .build();
-
-        Reserve savedReserve3 = repoReserve.save(reserve3);
-
-        // Incrementamos la capacidad actual - mismo horario
-        schedule2.setCurrentCapacity(schedule2.getCurrentCapacity() + 1);
-        repoSchedule.save(schedule2);
-
-        System.out.println("Reserva creada de " + savedReserve3.getUser().getFirstName());
-        System.out.println("Para el servicio " + savedReserve3.getSchedule().getService().getName());
-        System.out.println("El dia " + savedReserve3.getSchedule().getStartDatetime().toLocalDate());
     }
 
 }

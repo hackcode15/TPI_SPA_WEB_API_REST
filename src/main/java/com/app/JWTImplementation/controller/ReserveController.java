@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,6 +100,7 @@ public class ReserveController {
     }
 
     // nueva reserva
+    /*
     @PostMapping("/new")
     @ResponseBody
     @Operation(
@@ -155,8 +157,27 @@ public class ReserveController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
 
     }
+    */
+
+    // nuevo
+    @PostMapping("/new")
+    public ResponseEntity<ApiResponse<ReserveInfoDTO>> createReservation(@Valid @RequestBody ReserveDTO reserveDetails) {
+
+        Reserve reserve = service.saveReserve(reserveDetails);
+        ReserveInfoDTO reserveDTO = service.findReserveWithEntityById(reserve.getId());
+
+        ApiResponse<ReserveInfoDTO> response = new ApiResponse<>(
+                "Success",
+                "Reserve created successfully",
+                reserveDTO
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+
+    }
 
     // actualizar reserva
+    // NO hace falta - solo dar de baja
     @PutMapping("/update/{id}")
     @ResponseBody
     @Operation(
