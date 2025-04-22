@@ -39,8 +39,9 @@ public class ServiceSpa {
     @Column(name = "category_name", nullable = false, length = 45)
     private String categoryName;
 
+    @Builder.Default
     @Column(name = "duration_minutes", nullable = false)
-    private Integer durationMinutes;
+    private Integer durationMinutes = 60;
 
     @Builder.Default
     @Column(name = "is_active")

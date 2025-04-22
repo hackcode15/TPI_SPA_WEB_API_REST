@@ -2,6 +2,7 @@ package com.app.JWTImplementation.model;
 
 import java.time.LocalDateTime;
 
+import com.app.JWTImplementation.exceptions.InvalidReservationException;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -43,18 +44,6 @@ public class Reserve {
     // Metodo helper para acceder al servicio indirectamente
     public ServiceSpa getService() {
         return this.schedule.getService();
-    }
-
-    // Validación de integridad
-    @PrePersist
-    @PreUpdate
-    private void validate() {
-        if (schedule == null) {
-            throw new IllegalStateException("La reserva debe tener un horario asociado");
-        }
-        if (schedule.getCurrentCapacity() >= schedule.getMaxCapacity()) {
-            throw new IllegalStateException("No hay capacidad disponible en este horario");
-        }
     }
 
     public enum StatusReserve {

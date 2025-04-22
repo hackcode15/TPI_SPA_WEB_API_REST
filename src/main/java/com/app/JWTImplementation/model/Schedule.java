@@ -51,7 +51,7 @@ public class Schedule {
     private Boolean isActive = true;
     
     // 1 horario pertenece a un servicio (ManyToOne)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "service_id", nullable = false)
     private ServiceSpa service;
     
@@ -60,12 +60,4 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Reserve> reserves;
 
-    // Validación personalizada
-    @PrePersist
-    @PreUpdate
-    private void validate() {
-        if (endDatetime.isBefore(startDatetime)) {
-            throw new IllegalArgumentException("La fecha de fin debe ser posterior a la de inicio");
-        }
-    }
 }

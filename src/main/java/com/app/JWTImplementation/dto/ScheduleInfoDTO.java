@@ -23,5 +23,10 @@ public class ScheduleInfoDTO {
     private Integer currentCapacity;
     private Boolean isActive;
     private String service;
+    private Boolean available;
+
+    public Boolean getAvailable() {
+        return isActive && (currentCapacity < maxCapacity);
+    }
 
 }

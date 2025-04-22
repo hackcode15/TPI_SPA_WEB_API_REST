@@ -2,21 +2,22 @@ package com.app.JWTImplementation.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.app.JWTImplementation.dto.ReserveDTO;
-import com.app.JWTImplementation.exceptions.ScheduleNotFoundException;
-import com.app.JWTImplementation.exceptions.UserNotFoundException;
+import com.app.JWTImplementation.exceptions.*;
 import com.app.JWTImplementation.model.Schedule;
+import com.app.JWTImplementation.model.ServiceSpa;
 import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.repository.ScheduleRepository;
+import com.app.JWTImplementation.repository.ServiceSpaRepository;
 import com.app.JWTImplementation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.JWTImplementation.dto.ReserveInfoDTO;
 import com.app.JWTImplementation.dto.projection.ReserveProjection;
-import com.app.JWTImplementation.exceptions.ReserveNotFoundException;
 import com.app.JWTImplementation.model.Reserve;
 import com.app.JWTImplementation.repository.ReserveRepository;
 import com.app.JWTImplementation.service.impl.IReserveService;
@@ -34,17 +35,90 @@ public class ReserveService implements IReserveService {
     @Autowired
     private ScheduleRepository scheduleRepository;
 
+    @Autowired
+    private ServiceSpaRepository serviceSpaRepository;
+
     @Override
     public List<Reserve> findAllReserves() {
         return repository.findAll();
     }
 
-    @Override
     @Transactional
-    public Reserve saveReserve(Reserve reserve) {
+    public Reserve saveReserve(ReserveDTO reserveDetails) {
+        // Validación básica
+        if (reserveDetails.getScheduleId() == null &&
+                (reserveDetails.getServiceId() == null || reserveDetails.getSelectedTime() == null)) {
+            throw new InvalidReservationException("Debe proporcionar scheduleId o (serviceId + selectedTime)");
+        }
+
+        User user = userRepository.findById(reserveDetails.getUserId())
+                .orElseThrow(() -> new UserNotFoundException(reserveDetails.getUserId()));
+
+        Schedule schedule;
+        if (reserveDetails.getScheduleId() != null) {
+            // Caso A: Horario existente
+            schedule = scheduleRepository.findById(reserveDetails.getScheduleId())
+                    .orElseThrow(() -> new ScheduleNotFoundException(reserveDetails.getScheduleId()));
+
+            // Validar duplicados para el mismo usuario
+            if (repository.existsByUserAndSchedule(user.getId(), schedule.getId())) {
+                throw new InvalidReservationException("Ya tienes una reserva para este horario");
+            }
+        } else {
+            // Caso B: Nuevo horario
+            ServiceSpa service = serviceSpaRepository.findById(reserveDetails.getServiceId())
+                    .orElseThrow(() -> new ServiceSpaNotFoundException(reserveDetails.getServiceId()));
+
+            // Verificar si ya existe un horario para ese servicio en ese tiempo
+            List<Schedule> existingSchedules = scheduleRepository.findByServiceAndStartDatetime(
+                    service, reserveDetails.getSelectedTime());
+
+            if (!existingSchedules.isEmpty()) {
+                schedule = existingSchedules.get(0); // Toma el primero o aplica alguna lógica para elegir
+
+                // IMPORTANTE: Primero verificar si el usuario ya tiene reserva para este horario específico
+                // Verificación explícita consultando la tabla de reservas
+                List<Reserve> userReservesForSchedule = repository.findByUserIdAndScheduleId(user.getId(), schedule.getId());
+                if (!userReservesForSchedule.isEmpty()) {
+                    throw new InvalidReservationException("Ya tienes una reserva para este horario");
+                }
+
+                // Para servicios no grupales, verificar si ya está reservado
+                if (!service.getIsGroupService() && schedule.getCurrentCapacity() > 0) {
+                    throw new InvalidReservationException("Este horario ya está reservado");
+                }
+            } else {
+                schedule = Schedule.builder()
+                        .service(service)
+                        .startDatetime(reserveDetails.getSelectedTime())
+                        .endDatetime(reserveDetails.getSelectedTime().plusMinutes(service.getDurationMinutes()))
+                        .maxCapacity(service.getIsGroupService() ? 10 : 1)
+                        .currentCapacity(0)
+                        .isActive(true)
+                        .build();
+
+                schedule = scheduleRepository.save(schedule); // No olvides guardar el nuevo horario
+            }
+        }
+
+        validateReservation(schedule);
+
+        // Actualizar capacidad
+        schedule.setCurrentCapacity(schedule.getCurrentCapacity() + 1);
+        schedule = scheduleRepository.save(schedule);
+
+        Reserve reserve = Reserve.builder()
+                .dateReserve(LocalDateTime.now())
+                .user(user)
+                .schedule(schedule)
+                .status(Reserve.StatusReserve.CONFIRMED)
+                .build();
+
         return repository.save(reserve);
     }
 
+    // NO haria falta - para ahorrandos trabajo
+    // Hacer unicamente la baja de reserva
     @Override
     @Transactional
     public Reserve updateReserve(Integer id, ReserveDTO reserveDetails) {
@@ -58,7 +132,6 @@ public class ReserveService implements IReserveService {
         reserve.setDateReserve(LocalDateTime.now());
         reserve.setUser(user);
         reserve.setSchedule(schedule);
-        reserve.setStatus(reserveDetails.getStatus());
 
         return reserve;
 
@@ -120,6 +193,44 @@ public class ReserveService implements IReserveService {
                 .build();
 
         return reserveDTO;
+
+    }
+
+    private void validateReservation(Schedule schedule) {
+
+        if (schedule.getStartDatetime().isBefore(LocalDateTime.now().plusDays(3))) {
+            throw new InvalidReservationException("Se requiere al menos 3 dias de anticipacion");
+        }
+
+        // capacidad actual >= capacidad maxima
+        if (schedule.getCurrentCapacity() >= schedule.getMaxCapacity()) {
+            throw new InvalidReservationException("No hay cupos disponibles");
+        }
+
+        if (!schedule.getIsActive()) {
+            throw new InvalidReservationException("El horario no esta disponible");
+        }
+
+        // Verificar si el horario ya esta ocupado
+        if (!schedule.getService().getIsGroupService() && schedule.getCurrentCapacity() > 0) {
+            throw new InvalidReservationException("Este horario ya esta reservado");
+        }
+
+    }
+
+    private Schedule generateSingleSchedule(ReserveDTO reserveDetails) {
+
+        ServiceSpa service = serviceSpaRepository.findById(reserveDetails.getServiceId())
+                .orElseThrow(() -> new ReserveNotFoundException(reserveDetails.getServiceId()));
+
+        return Schedule.builder()
+                .startDatetime(reserveDetails.getSelectedTime())
+                .endDatetime(reserveDetails.getSelectedTime().plusMinutes(service.getDurationMinutes()))
+                .service(service)
+                .currentCapacity(0)
+                .maxCapacity(service.getIsGroupService() ? 10 : 1)
+                .isActive(true)
+                .build();
 
     }
 
