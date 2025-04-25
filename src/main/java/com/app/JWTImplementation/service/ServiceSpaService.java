@@ -104,4 +104,26 @@ public class ServiceSpaService implements IServiceSpaService {
 
     }
 
+    public List<ServiceSpaInfoDTO> findAllServicesByCategoryName(String categoryName) {
+
+        List<ServiceSpaProjection> servicesProjections = repository.findAllServicesByCategoryName(categoryName);
+
+        List<ServiceSpaInfoDTO> servicesDto = servicesProjections.stream()
+                .map(service -> {
+                    ServiceSpaInfoDTO dto = ServiceSpaInfoDTO.builder()
+                            .id(service.getId())
+                            .name(service.getName())
+                            .description(service.getDescription())
+                            .category(service.getCategoryName())
+                            .durationMinutes(service.getDurationMinutes())
+                            .isActive(service.getIsActive())
+                            .type(service.getIsGroup() ? "Grupal" : "individual")
+                            .build();
+                    return dto;
+                }).collect(Collectors.toList());
+
+        return servicesDto;
+
+    }
+
 }
