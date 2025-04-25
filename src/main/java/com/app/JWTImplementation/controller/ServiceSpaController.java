@@ -26,6 +26,22 @@ public class ServiceSpaController {
     @Autowired
     private ServiceSpaService service;
 
+    @GetMapping("/list-category-name/{category}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<List<ServiceSpaInfoDTO>>> getAllServicesByCategoryName (@PathVariable("category") String category){
+
+        List<ServiceSpaInfoDTO> services = service.findAllServicesByCategoryName(category);
+
+        ApiResponse<List<ServiceSpaInfoDTO>> response = new ApiResponse<>(
+                "Success",
+                "All Services of Category Name successfully",
+                services
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
     @GetMapping("/list") // /list-info
     @ResponseBody
     @Operation(
@@ -330,5 +346,7 @@ public class ServiceSpaController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+
 
 }

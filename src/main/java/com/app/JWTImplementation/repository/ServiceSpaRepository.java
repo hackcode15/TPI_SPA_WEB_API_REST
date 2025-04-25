@@ -57,5 +57,19 @@ public interface ServiceSpaRepository extends JpaRepository<ServiceSpa, Integer>
     @Query("SELECT s.isGroupService FROM ServiceSpa s WHERE s.id = :id")
     Boolean findIsGroupServiceById(@Param("id") Integer id);
 
+    @Query("""
+            SELECT
+                s.id as id,
+                s.name as name,
+                s.description as description,
+                s.categoryName as categoryName,
+                s.durationMinutes as durationMinutes,
+                s.isActive as isActive,
+                s.isGroupService as isGroup
+            FROM ServiceSpa s
+            WHERE s.categoryName = :category
+            """)
+    List<ServiceSpaProjection> findAllServicesByCategoryName(@Param("category") String category);
+
 
 }
