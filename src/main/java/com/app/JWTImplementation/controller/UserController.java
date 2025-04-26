@@ -32,9 +32,25 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/user")
 @Tag(name = "Usuario", description = "Controlador para los Usuarios")
 public class UserController {
-    
+
     @Autowired
     private UserService userService;
+
+    @GetMapping("/username/{username}")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<UserResponse>> getUserByUsername(@PathVariable String username) {
+
+        UserResponse user = userService.findUserByUsername(username);
+
+        ApiResponse<UserResponse> response = new ApiResponse<>(
+                "Success",
+                "User retrived successfully",
+                user
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
 
     @GetMapping("/list")
     @ResponseBody
@@ -56,38 +72,46 @@ public class UserController {
             }
     )
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
-        
+
+        /*
         List<User> users = userService.findAllUsers();
 
         List<UserResponse> userResponses = users.stream()
-            .map(user -> {
-                
-                UserResponse userDTO = UserResponse.builder()
-                    .id(user.getId())
-                    .username(user.getUsername())
-                    .password(user.getPassword())
-                    .firstName(user.getFirstName())
-                    .lastName(user.getLastName())
-                    .createAt(user.getCreateAt())
-                    .updateAt(user.getUpdateAt())
-                    .roleName(user.getRole())
-                    .build();
+                .map(UserResponse::fromUser)
+                .toList(); // Valido  a partir de Java 16+ (mejor que Collectors.toList())
+        */
 
-                return userDTO;
+        /*List<User> users = userService.findAllUsers();
 
-            }).collect(Collectors.toList());
+        List<UserResponse> userResponses = users.stream()
+                .map(user -> {
+
+                    UserResponse userDTO = UserResponse.builder()
+                            .id(user.getId())
+                            .username(user.getUsername())
+                            .password(user.getPassword())
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .createAt(user.getCreateAt())
+                            .updateAt(user.getUpdateAt())
+                            .roleName(user.getRole())
+                            .build();
+
+                    return userDTO;
+
+                }).collect(Collectors.toList());*/
 
         ApiResponse<List<UserResponse>> response = new ApiResponse<>(
-            "Success",
-            "Users retrived succesfully",
-            userResponses
+                "Success",
+                "Users retrived succesfully",
+                userService.findAllUsers()
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
-    @GetMapping("/{id}") 
+    @GetMapping("/{id}")
     @ResponseBody
     @Operation(
             summary = "Mostrar Usuario por su ID",
@@ -107,24 +131,24 @@ public class UserController {
             }
     )
     public ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable("id") Integer id) {
-        
-        User user = userService.findUserById(id);
+
+        /*User user = userService.findUserById(id);
 
         UserResponse userResponse = UserResponse.builder()
-            .id(user.getId())
-            .username(user.getUsername())
-            .password(user.getPassword())
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .createAt(user.getCreateAt())
-            .updateAt(user.getUpdateAt())
-            .roleName(user.getRole())
-            .build();
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .createAt(user.getCreateAt())
+                .updateAt(user.getUpdateAt())
+                .roleName(user.getRole())
+                .build();*/
 
         ApiResponse<UserResponse> response = new ApiResponse<>(
-            "Success",
-            "User successfully recovered",
-            userResponse
+                "Success",
+                "User successfully recovered",
+                userService.findUserById(id)
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -162,24 +186,24 @@ public class UserController {
             }
     )
     public ResponseEntity<ApiResponse<UserResponse>> newUser(@Valid @RequestBody UserDTO userDetails) {
-        
-        User newUserCreated = userService.saveUser(userDetails);
+
+        /*User newUserCreated = userService.saveUser(userDetails);
 
         UserResponse userResponse = UserResponse.builder()
-            .id(newUserCreated.getId())
-            .username(newUserCreated.getUsername())
-            .password(newUserCreated.getPassword())
-            .firstName(newUserCreated.getFirstName())
-            .lastName(newUserCreated.getLastName())
-            .createAt(newUserCreated.getCreateAt())
-            .updateAt(newUserCreated.getUpdateAt())
-            .roleName(newUserCreated.getRole())
-            .build();
-        
+                .id(newUserCreated.getId())
+                .username(newUserCreated.getUsername())
+                .password(newUserCreated.getPassword())
+                .firstName(newUserCreated.getFirstName())
+                .lastName(newUserCreated.getLastName())
+                .createAt(newUserCreated.getCreateAt())
+                .updateAt(newUserCreated.getUpdateAt())
+                .roleName(newUserCreated.getRole())
+                .build();*/
+
         ApiResponse<UserResponse> response = new ApiResponse<>(
-            "Success",
-            "User created successfully",
-            userResponse
+                "Success",
+                "User created successfully",
+                userService.saveUser(userDetails)
         );
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -219,25 +243,25 @@ public class UserController {
             }
     )
     public ResponseEntity<ApiResponse<UserResponse>> updateUserById(
-        @PathVariable("id") Integer id, 
-        @Valid @RequestBody UserDTO userDetails) {
-    
-        User user = userService.updateUserById(id, userDetails);
+            @PathVariable("id") Integer id,
+            @Valid @RequestBody UserDTO userDetails) {
+
+        /*User user = userService.updateUserById(id, userDetails);
 
         UserResponse userResponse = UserResponse.builder()
-            .id(user.getId())
-            .username(user.getUsername())
-            .password(user.getPassword())
-            .firstName(user.getFirstName())
-            .lastName(user.getLastName())
-            .updateAt(LocalDateTime.now())
-            .roleName(user.getRole())
-            .build();
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .updateAt(LocalDateTime.now())
+                .roleName(user.getRole())
+                .build();*/
 
         ApiResponse<UserResponse> response = new ApiResponse<>(
-            "Success", // modificado
-            "Updated user successfully",
-            userResponse
+                "Success", // modificado
+                "Updated user successfully",
+                userService.updateUserById(id, userDetails)
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -263,13 +287,13 @@ public class UserController {
             }
     )
     public ResponseEntity<ApiResponse<String>> deleteUserById(@PathVariable("id") Integer id) {
-    
+
         userService.deleteUserById(id);
 
         ApiResponse<String> response = new ApiResponse<>(
-            "Success",
-            "Deleted user successfully",
-            null
+                "Success",
+                "Deleted user successfully",
+                null
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);

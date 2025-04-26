@@ -2,6 +2,7 @@ package com.app.JWTImplementation.dto.responses;
 
 import java.time.LocalDateTime;
 
+import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.model.User.Role;
 
 import lombok.AllArgsConstructor;
@@ -25,5 +26,18 @@ public class UserResponse {
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
     private Role roleName;
+
+    public static UserResponse fromUser(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .password(user.getPassword())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .createAt(user.getCreateAt())
+                .updateAt(user.getUpdateAt())
+                .roleName(user.getRole())
+                .build();
+    }
 
 }

@@ -1,11 +1,15 @@
 package com.app.JWTImplementation.dto;
 
+import com.app.JWTImplementation.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +32,16 @@ public class UserDTO {
     @NotBlank(message = "First name is required")
     @Size(max = 45, message = "First name cannot exceed 45 characters")
     private String firstName;
+
+    public User toEntity(PasswordEncoder passwordEncoder) {
+        return User.builder()
+                .username(this.username)
+                .password(passwordEncoder.encode(this.password)) // Encriptación aquí
+                .firstName(this.firstName)
+                .lastName(this.lastName)
+                .createAt(LocalDateTime.now()) // Fecha actual
+                .role(User.Role.CUSTOMER) // Valor por defecto
+                .build();
+    }
     
 }
