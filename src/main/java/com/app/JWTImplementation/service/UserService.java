@@ -3,8 +3,10 @@ package com.app.JWTImplementation.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.app.JWTImplementation.dto.responses.UserResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import com.app.JWTImplementation.model.User.Role;
 import com.app.JWTImplementation.repository.UserRepository;
 import com.app.JWTImplementation.service.impl.IUserService;
 
+@Slf4j
 @Service
 public class UserService implements IUserService {
 
@@ -27,8 +30,17 @@ public class UserService implements IUserService {
 
     public UserResponse findUserByUsername(String username) {
 
-        User user = repository.findUserByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        /*User user = repository.findUserByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));*/
+
+        Optional<User> userOptional = repository.findUserByUsername(username);
+
+        if (userOptional.isEmpty()) {
+            log.debug("Usuario no encontrado con username: {}", username);
+            throw new UserNotFoundException("User not found whith username: " + username);
+        }
+
+        User user = userOptional.get();
 
         return new UserResponse(
                 user.getId(),
