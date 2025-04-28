@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA ADMINISTRADORES Y DESARROLLADORES░░░░░░░░░░░░░░░░░
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @GetMapping("/username/{username}")
     @ResponseBody
     public ResponseEntity<ApiResponse<UserResponse>> getUserByUsername(@PathVariable String username) {
@@ -58,6 +61,8 @@ public class UserController {
 
     }
 
+    // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA ADMINISTRADORES Y DESARROLLADORES░░░░░░░░░░░░░░░░░
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @GetMapping("/list")
     @ResponseBody
     @Operation(
@@ -67,7 +72,7 @@ public class UserController {
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(
                             responseCode = "200",
-                            description = "",
+                            description = "Lista de usuarios recuperados con exito",
                             content = @Content(
                                     mediaType = "application/json",
                                     schema = @Schema(
@@ -117,6 +122,8 @@ public class UserController {
 
     }
 
+    // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA ADMINISTRADORES Y DESARROLLADORES░░░░░░░░░░░░░░░░░
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @GetMapping("/{id}")
     @ResponseBody
     @Operation(
@@ -161,7 +168,8 @@ public class UserController {
 
     }
 
-    // post - save user
+    // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA ADMINISTRADORES Y DESARROLLADORES░░░░░░░░░░░░░░░░░
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @PostMapping("/new")
     @ResponseBody
     @Operation(
@@ -219,6 +227,8 @@ public class UserController {
     // patch - update partial
     // @PatchMapping("/update-partial/{id}")
 
+    // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA ADMINISTRADORES Y DESARROLLADORES░░░░░░░░░░░░░░░░░
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @PutMapping("/update/{id}")
     @ResponseBody
     @Operation(
@@ -274,6 +284,8 @@ public class UserController {
 
     }
 
+    // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA ADMINISTRADORES Y DESARROLLADORES░░░░░░░░░░░░░░░░░
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @DeleteMapping("/delete/{id}")
     @Operation(
             summary = "Borrar Usuario",
