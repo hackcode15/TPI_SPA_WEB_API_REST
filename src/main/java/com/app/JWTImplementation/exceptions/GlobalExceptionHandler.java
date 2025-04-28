@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
     // Excepcion para la entidad User
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ApiResponse<String>> hadleUserNotFoundException(UserNotFoundException ex) {
-        
+
         ApiResponse<String> error = new ApiResponse<>(
             "error",
             ex.getMessage(),

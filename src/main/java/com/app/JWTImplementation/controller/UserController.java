@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import com.app.JWTImplementation.service.UserService;
 
 import jakarta.validation.Valid;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/user")
 @Tag(name = "Usuario", description = "Controlador para los Usuarios")
@@ -40,7 +42,11 @@ public class UserController {
     @ResponseBody
     public ResponseEntity<ApiResponse<UserResponse>> getUserByUsername(@PathVariable String username) {
 
+        log.info("Buscando usuario por username: {}", username);
+
         UserResponse user = userService.findUserByUsername(username);
+
+        log.debug("Usuario encontrado: {}", user);
 
         ApiResponse<UserResponse> response = new ApiResponse<>(
                 "Success",
