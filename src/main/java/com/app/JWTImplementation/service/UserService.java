@@ -3,8 +3,11 @@ package com.app.JWTImplementation.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.app.JWTImplementation.dto.projection.UserHistoryReservationProjection;
+import com.app.JWTImplementation.dto.responses.UserReservationHistoryResponse;
 import com.app.JWTImplementation.dto.responses.UserResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,6 +170,27 @@ public class UserService implements IUserService {
         User updateUser = repository.save(user);
 
         return UserResponse.fromUser(updateUser);
+
+    }
+
+
+    // Consultas para los usuarios de tipo cliente, informacion personal
+    // Listar el historial de reservas de un cliente en especifico
+    public List<UserReservationHistoryResponse> findAllUserReservationHistoryById(Integer id) {
+
+        List<UserHistoryReservationProjection> projections = repository.findAllHistoryReservationById(id);
+
+        // Log temporal
+        /*projections.forEach(p -> {
+            log.info("Datos recibidos: userId={}, serviceStart={}, serviceEnd={}",
+                    p.getUserId(),
+                    p.getServiceStartDatetime(),
+                    p.getServiceEndDatetime());
+        });*/
+
+        return projections.stream()
+                .map(UserReservationHistoryResponse::fromUserReservationHistory)
+                .toList();
 
     }
     

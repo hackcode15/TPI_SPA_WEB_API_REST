@@ -2,9 +2,11 @@ package com.app.JWTImplementation.config;
 
 import java.util.Arrays;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,39 +22,66 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-   
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authProvider;
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        
+
         return http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // nuevo
-            .authorizeHttpRequests(authRequest -> authRequest
-                    .requestMatchers(
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // nuevo
+                .authorizeHttpRequests(endpoint -> {
+
+                    // ░░░░░░░░░░░░░░░░░░░░CONFIGURACION DE ENDPOINTS░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+                    // ░░░░░░░░░░░░░░░░░░░░░░░░░░░ENPOINTS PUBLICOS░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+                    endpoint.requestMatchers(
+                            // endpoint de autenticacion (Login y Register)
                             "/auth/**",
+                            // endpoints de la documentacion de swagger
                             "/swagger-ui/**",
                             "/v3/api-docs/**",
                             "/swagger-ui.html",
-                            "/swagger-resources/**",
-                            "/webjars/**",
+                            // endpoint de la pagina de error por defecto
                             "/error",
+                            // endpoints propios
                             "/api/availability/**",
                             "/api/service-spa/**",
                             "/api/schedule/**"
-                    )
-                    .permitAll()
-                    .anyRequest().authenticated())
-            .sessionManagement(sessionManager -> sessionManager 
-                  .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authProvider)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .build();
-                
+                    ).permitAll();
+
+                    // ░░░░░░░░░░░░░░░░░░░░░░░░░░ENPOINTS DE CLIENTES░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+
+                    // ░░░░░░░░░░░░░░░░░░░░░░ENPOINTS DE ADMINISTRADORES░░░░░░░░░░░░░░░░░░░░░░░░░
+                    // ejemplo
+                    /*endpoint.requestMatchers(
+                            "/api/reserve/list-info",
+                            "/api/reserve/info/{id}"
+                    ).hasRole("ADMIN");*/
+
+                    // ░░░░░░░░░░░░░░░░░░░░░░░ENPOINTS DE DESARROLLADORES░░░░░░░░░░░░░░░░░░░░░░░░░
+
+
+                    // ░░░░░░░░░░░░░░░LOS DEMAS ENDPOINTS NECESITAN AUTENTICACION░░░░░░░░░░░░░░░░░
+                    endpoint.anyRequest().authenticated();
+
+                })
+                .sessionManagement(sessionManager -> sessionManager
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authProvider)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exc -> // solo se activara si viene de .requestMatchers().hasRole() <- ejemplo. No por las anotaciones de @PreAuthorize
+                        exc.accessDeniedHandler(((request, response, accessDeniedException) -> {
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.getWriter().write("Acceso denegado: No tienes los permisos necesarios");
+                        })))
+                .build();
+
     }
 
     @Bean

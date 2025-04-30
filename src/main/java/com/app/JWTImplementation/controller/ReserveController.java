@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.JWTImplementation.dto.ReserveInfoDTO;
@@ -99,16 +100,15 @@ public class ReserveController {
 
     }
 
-    // nueva reserva
-    /*
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/new")
-    @ResponseBody
     @Operation(
             summary = "Nueva Reserva",
             description = "Creación de una nueva Reserva",
             tags = {"Reserva"},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Solicitud de creación con el ID del usuario, el ID del horario del Servicio y su estado",
+                    description = "1° Forma de solicitud de creación con el ID del usuario, el ID del horario (existente en BD) y el ID del servicio" +
+                            "2° Forma de solicitud de creación con el ID del usuario, el horario seleccionado desde el frontend y el ID del servicio",
                     required = true,
                     content = @Content(
                             mediaType = "application/json",
@@ -130,37 +130,6 @@ public class ReserveController {
                     )
             }
     )
-    public ResponseEntity<ApiResponse<ReserveInfoDTO>> createReserve(@RequestBody ReserveDTO reserveDTO) {
-
-        // FALTAN VALIDACIONES
-
-        User user = userService.findUserById(reserveDTO.getUserId());
-        Schedule schedule = scheduleService.findScheduleById(reserveDTO.getScheduleId());
-
-        Reserve reserveSaved = Reserve.builder()
-                .dateReserve(LocalDateTime.now())
-                .user(user)
-                .schedule(schedule)
-                .status(Reserve.StatusReserve.CONFIRMED)
-                .build();
-
-        Reserve reserve = service.saveReserve(reserveSaved);
-
-        ReserveInfoDTO reserveInfoDTO = service.findReserveWithEntityById(reserve.getId());
-
-        ApiResponse<ReserveInfoDTO> response = new ApiResponse<>(
-                "Success",
-                "Reservation made successfully",
-                reserveInfoDTO
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-
-    }
-    */
-
-    // nuevo
-    @PostMapping("/new")
     public ResponseEntity<ApiResponse<ReserveInfoDTO>> createReservation(@Valid @RequestBody ReserveDTO reserveDetails) {
 
         Reserve reserve = service.saveReserve(reserveDetails);
@@ -259,10 +228,5 @@ public class ReserveController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
-
-    // listar reservas de un cliente en especifico
-
-    // listar reservas de un servicio en especifico
-
 
 }

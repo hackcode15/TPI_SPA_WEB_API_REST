@@ -6,6 +6,10 @@ import com.app.JWTImplementation.dto.generationSchedulesDTOs.TimeSlotDTO;
 import com.app.JWTImplementation.dto.responses.ApiResponse;
 import com.app.JWTImplementation.repository.ScheduleRepository;
 import com.app.JWTImplementation.service.ScheduleGeneratorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -24,12 +28,30 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/availability")
+@Tag(name = "Disponibilidad", description = "Controlador para los Horarios generados en memoria")
 public class AvailabilityController {
 
     @Autowired
     private ScheduleGeneratorService scheduleGeneratorService;
 
     @GetMapping
+    @Operation(
+            summary = "Generador de horarios en memoria",
+            description = "Genera horarios en un formato json mediante el ID del servicio, la fecha y el numero total de dias",
+            tags = {"Disponibilidad"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Horarios generados exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = AvailabilityResponseDTO.class
+                                    )
+                            )
+                    )
+            }
+    )
     public ResponseEntity<ApiResponse<List<AvailabilityResponseDTO>>> getAvailability(
             @RequestParam Integer serviceId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,

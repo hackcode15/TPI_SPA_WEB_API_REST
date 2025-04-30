@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.exceptions;
 
+
 import java.util.HashMap;
 //import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -118,6 +120,20 @@ public class GlobalExceptionHandler {
         );
 
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    // Excepcion para la negacion de acceso
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<String>> hadleAccessDeniedException(AccessDeniedException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                "error",
+                "Acceso denegado: No tienes los permisos necesarios",
+                null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
 
     }
 
