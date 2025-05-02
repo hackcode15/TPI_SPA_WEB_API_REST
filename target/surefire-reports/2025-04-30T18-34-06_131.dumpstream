@@ -1,4 +1,4 @@
-# Created at 2025-04-22T16:08:54.150
+# Created at 2025-04-30T18:34:06.323
 Boot Manifest-JAR contains absolute paths in classpath 'D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\target\test-classes'
 Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 'other' has different root

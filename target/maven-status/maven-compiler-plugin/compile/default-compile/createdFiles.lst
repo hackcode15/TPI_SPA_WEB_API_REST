@@ -1,6 +1,7 @@
 com\app\JWTImplementation\config\SwaggerConfig.class
 com\app\JWTImplementation\service\ServiceSpaService.class
 com\app\JWTImplementation\dto\ScheduleDTO.class
+com\app\JWTImplementation\dto\responses\UserReservationHistoryResponse$UserReservationHistoryResponseBuilder.class
 com\app\JWTImplementation\dto\projection\ReserveProjection.class
 com\app\JWTImplementation\service\ReserveService.class
 com\app\JWTImplementation\service\AuthService.class
@@ -11,8 +12,10 @@ com\app\JWTImplementation\dto\request\LoginRequest.class
 com\app\JWTImplementation\controller\AuthController.class
 com\app\JWTImplementation\dto\ScheduleDTO$ScheduleDTOBuilder.class
 com\app\JWTImplementation\repository\ServiceSpaRepository.class
+com\app\JWTImplementation\dto\projection\UserHistoryReservationProjection.class
 com\app\JWTImplementation\dto\request\LoginRequest$LoginRequestBuilder.class
 com\app\JWTImplementation\dto\responses\ApiResponse$ApiResponseBuilder.class
+com\app\JWTImplementation\dto\responses\UserReservationHistoryResponse.class
 com\app\JWTImplementation\dto\responses\AuthResponse$AuthResponseBuilder.class
 com\app\JWTImplementation\model\User$UserBuilder.class
 com\app\JWTImplementation\service\impl\IServiceSpaService.class
@@ -52,11 +55,14 @@ com\app\JWTImplementation\model\User$Role.class
 com\app\JWTImplementation\dto\request\RegisterRequest.class
 com\app\JWTImplementation\controller\ReserveController.class
 com\app\JWTImplementation\JWT\JwtService.class
+com\app\JWTImplementation\controller\CustomerController.class
 com\app\JWTImplementation\dto\ServiceSpaInfoDTO.class
+com\app\JWTImplementation\controller\DeveloperController.class
 com\app\JWTImplementation\controller\UserController.class
 com\app\JWTImplementation\repository\ScheduleRepository.class
 com\app\JWTImplementation\service\UserService.class
 com\app\JWTImplementation\controller\ServiceSpaController.class
+com\app\JWTImplementation\controller\AdminController.class
 com\app\JWTImplementation\exceptions\InvalidReservationException.class
 com\app\JWTImplementation\JwtImplementationApplication.class
 com\app\JWTImplementation\dto\generationSchedulesDTOs\TimeSlotAvailabilityDTO.class

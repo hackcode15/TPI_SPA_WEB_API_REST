@@ -29,7 +29,7 @@ import org.springframework.http.HttpHeaders;
                 ),
                 @Server(
                         description = "SERVIDOR DE PRODUCCION",
-                        url = "http://18.231.220.109"
+                        url = "http://my-api-spring-app.sa-east-1.elasticbeanstalk.com"
                 )
         },
         security = @SecurityRequirement(

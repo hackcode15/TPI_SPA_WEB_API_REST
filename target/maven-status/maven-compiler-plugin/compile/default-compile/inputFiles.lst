@@ -1,8 +1,11 @@
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\config\ApplicationConfig.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\config\SecurityConfig.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\config\SwaggerConfig.java
+D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\AdminController.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\AuthController.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\AvailabilityController.java
+D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\CustomerController.java
+D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\DeveloperController.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\ReserveController.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\ScheduleController.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\controller\ServiceSpaController.java
@@ -16,12 +19,14 @@ D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\j
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\projection\ReserveProjection.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\projection\ScheduleProjection.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\projection\ServiceSpaProjection.java
+D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\projection\UserHistoryReservationProjection.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\request\LoginRequest.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\request\RegisterRequest.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\ReserveDTO.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\ReserveInfoDTO.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\responses\ApiResponse.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\responses\AuthResponse.java
+D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\responses\UserReservationHistoryResponse.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\responses\UserResponse.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\ScheduleDTO.java
 D:\Documents\TUP-2año\Metodologia-de-Sistemas-1\TPI_SPA_WEB_API_REST\src\main\java\com\app\JWTImplementation\dto\ScheduleInfoDTO.java
