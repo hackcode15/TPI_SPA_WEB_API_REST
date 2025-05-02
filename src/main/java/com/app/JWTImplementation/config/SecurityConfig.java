@@ -47,6 +47,7 @@ public class SecurityConfig {
                             "/swagger-ui/**",
                             "/v3/api-docs/**",
                             "/swagger-ui.html",
+                            "/api-docs",
                             // endpoint de la pagina de error por defecto
                             "/error",
                             // endpoints propios
