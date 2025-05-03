@@ -16,5 +16,9 @@ public class AuthResponse {
     private String status;
     private String message;
     private String token;
+
+    // info del usuario logueado
+    private Integer idUser;
+    private String username;
     
 }
