@@ -70,7 +70,7 @@ public class DataLoader implements CommandLineRunner {
                 .password(passwordEncoder.encode("2004"))
                 .firstName("Diego Elias")
                 .lastName("Gomez")
-                .role(Role.CUSTOMER)
+                .role(Role.DEVELOPER)
                 .build();
 
         // USER
@@ -91,7 +91,23 @@ public class DataLoader implements CommandLineRunner {
                 .role(Role.CUSTOMER)
                 .build();
 
-        repoUser.saveAll(List.of(diego, vale, lidia));
+        User juan = User.builder()
+                .username("juan")
+                .password(passwordEncoder.encode("1234"))
+                .firstName("Juan")
+                .lastName("Salinas")
+                .role(Role.ADMIN)
+                .build();
+
+        User jose = User.builder()
+                .username("jose")
+                .password(passwordEncoder.encode("1234"))
+                .firstName("Jose")
+                .lastName("Gomez")
+                .role(Role.CUSTOMER)
+                .build();
+
+        repoUser.saveAll(List.of(diego, vale, lidia, juan, jose));
 
     }
 
