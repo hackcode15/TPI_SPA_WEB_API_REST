@@ -56,6 +56,10 @@ public class SecurityConfig {
                             "/api/schedule/**"
                     ).permitAll();
 
+                    // ░░░░░░░░░░░░░░░░░░░¿DONDE VEO LAS OTRAS CONFIGURACIONES?░░░░░░░░░░░░░░░░░░
+                    // Se encuentran en cada defenicion del endpoint en los controladores
+                    // con la anotacion @PreAuthorize("hasRole('')") o @PreAuthorize("hasAnyRole('')")
+
                     // ░░░░░░░░░░░░░░░░░░░░░░░░░░ENPOINTS DE CLIENTES░░░░░░░░░░░░░░░░░░░░░░░░░░░░
 
                     // ░░░░░░░░░░░░░░░░░░░░░░ENPOINTS DE ADMINISTRADORES░░░░░░░░░░░░░░░░░░░░░░░░░
