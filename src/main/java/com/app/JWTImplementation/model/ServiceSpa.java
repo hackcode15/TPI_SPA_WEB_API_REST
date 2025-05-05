@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -32,6 +33,9 @@ public class ServiceSpa {
     
     @Column(nullable = false, length = 45)
     private String name;
+
+    @Column(nullable = false)
+    private BigDecimal price;
 
     @Column(length = 150)
     private String description;

@@ -19,6 +19,7 @@ public class AuthResponse {
 
     // info del usuario logueado
     private Integer idUser;
+    private String email;
     private String username;
     
 }

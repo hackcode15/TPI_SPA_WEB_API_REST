@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -19,6 +20,7 @@ public class ReserveInfoDTO {
     private LocalDate dateReserve;
     private String userFullName;
     private String serviceName;
+    private BigDecimal servicePrice;
     private LocalDate startDate;
     private LocalTime startTime;
     private LocalTime endTime;

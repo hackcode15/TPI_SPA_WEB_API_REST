@@ -52,6 +52,7 @@ public class AuthService implements IAuthService {
                 .status("Success")
                 .message("You have successfully logged in")
                 .idUser(userLogin.getId())
+                .email(userLogin.getEmail())
                 .username(userLogin.getUsername())
                 .token(token)
                 .build();
@@ -62,6 +63,7 @@ public class AuthService implements IAuthService {
     public AuthResponse register(RegisterRequest request) {
 
         User user = User.builder()
+                .email(request.getEmail())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .firstName(request.getFirstName())
@@ -76,6 +78,7 @@ public class AuthService implements IAuthService {
                 .status("Success")
                 .message("User successfully registered")
                 .idUser(user.getId()) // nuevo -> obtener el id
+                .email(user.getEmail())
                 .username(user.getUsername()) // nuevo -> obtener el username
                 .token(jwtService.getToken(user))
                 .build();
