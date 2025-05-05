@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -19,6 +20,9 @@ public class UserReservationHistoryResponse {
     private LocalDate reserveDate;
     private String userFullName;
     private String serviceName;
+
+    private BigDecimal servicePrice;
+
     private LocalDate serviceStartDate;
     private LocalTime serviceStartTime;
     private LocalTime serviceEndTime;
@@ -30,6 +34,7 @@ public class UserReservationHistoryResponse {
                 .reserveDate(reservationHistory.getReserveDateTime().toLocalDate())
                 .userFullName(reservationHistory.getUserFullName())
                 .serviceName(reservationHistory.getServiceName())
+                .servicePrice(reservationHistory.getServicePrice()) //
                 .serviceStartDate(reservationHistory.getServiceStartDatetime().toLocalDate())
                 .serviceStartTime(reservationHistory.getServiceStartDatetime().toLocalTime())
                 .serviceEndTime(reservationHistory.getServiceEndDatetime().toLocalTime())

@@ -15,6 +15,9 @@ public class RegisterRequest {
 
     // Creacion
 
+    @NotBlank
+    private String email;
+
     @NotBlank // El campo username no debe estar vacio
     @Size(min = 4, max = 45, message = "Username must be between 4 and 45 characters") // Longitud del username
     private String username;

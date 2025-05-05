@@ -43,6 +43,7 @@ public class ServiceSpaService implements IServiceSpaService {
         ServiceSpa serviceSpa = this.findServiceSpaById(id);
 
         serviceSpa.setName(serviceSpaDetails.getName());
+        serviceSpa.setPrice(serviceSpaDetails.getPrice());
         serviceSpa.setDescription(serviceSpaDetails.getDescription());
         serviceSpa.setCategoryName(serviceSpaDetails.getCategory());
         serviceSpa.setDurationMinutes(serviceSpaDetails.getDurationMinutes());
@@ -70,6 +71,7 @@ public class ServiceSpaService implements IServiceSpaService {
                     ServiceSpaInfoDTO dto = ServiceSpaInfoDTO.builder()
                             .id(service.getId())
                             .name(service.getName())
+                            .price(service.getPrice())
                             .description(service.getDescription())
                             .category(service.getCategoryName())
                             .durationMinutes(service.getDurationMinutes())
@@ -93,6 +95,7 @@ public class ServiceSpaService implements IServiceSpaService {
         ServiceSpaInfoDTO dto = ServiceSpaInfoDTO.builder()
                 .id(service.getId())
                 .name(service.getName())
+                .price(service.getPrice())
                 .description(service.getDescription())
                 .category(service.getCategoryName())
                 .durationMinutes(service.getDurationMinutes())

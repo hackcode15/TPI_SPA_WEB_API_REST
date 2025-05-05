@@ -19,6 +19,7 @@ public class UserResponse {
     // Lectura
     
     private Integer id;
+    private String email;
     private String username;
     private String password;
     private String firstName;
@@ -30,6 +31,7 @@ public class UserResponse {
     public static UserResponse fromUser(User user) {
         return UserResponse.builder()
                 .id(user.getId())
+                .email(user.getEmail())
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .firstName(user.getFirstName())

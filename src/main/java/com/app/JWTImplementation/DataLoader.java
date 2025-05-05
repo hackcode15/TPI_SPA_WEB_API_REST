@@ -2,6 +2,7 @@
 package com.app.JWTImplementation;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -66,6 +67,7 @@ public class DataLoader implements CommandLineRunner {
 
         // ADMIN
         User diego = User.builder()
+                .email("taysonm895@gmail.com")
                 .username("diego")
                 .password(passwordEncoder.encode("2004"))
                 .firstName("Diego Elias")
@@ -75,6 +77,7 @@ public class DataLoader implements CommandLineRunner {
 
         // USER
         User vale = User.builder()
+                .email("correoinventado123@gmail.com")
                 .username("vale")
                 .password(passwordEncoder.encode("2016"))
                 .firstName("Valentina Lara")
@@ -84,6 +87,7 @@ public class DataLoader implements CommandLineRunner {
 
         // USER
         User lidia = User.builder()
+                .email("correonuevo123@gmail.com")
                 .username("lidia")
                 .password(passwordEncoder.encode("1984"))
                 .firstName("Lidia Celeste")
@@ -92,6 +96,7 @@ public class DataLoader implements CommandLineRunner {
                 .build();
 
         User juan = User.builder()
+                .email("micorreojuan123@gmail.com")
                 .username("juan")
                 .password(passwordEncoder.encode("1234"))
                 .firstName("Juan")
@@ -100,6 +105,7 @@ public class DataLoader implements CommandLineRunner {
                 .build();
 
         User jose = User.builder()
+                .email("correorandom123@gmail.com")
                 .username("jose")
                 .password(passwordEncoder.encode("1234"))
                 .firstName("Jose")
@@ -120,6 +126,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa antiStress = ServiceSpa.builder()
                 .name("Anti-stress")
                 .description(null)
+                .price(BigDecimal.valueOf(15000))
                 .categoryName("MASAJE")
                 .durationMinutes(60)
                 .isActive(true)
@@ -129,6 +136,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa descontracturantes = ServiceSpa.builder()
                 .name("Descontracturantes")
                 .description(null)
+                .price(BigDecimal.valueOf(13000))
                 .categoryName("MASAJE")
                 .durationMinutes(60)
                 .isActive(true)
@@ -139,6 +147,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa liftingDePestana = ServiceSpa.builder()
                 .name("Lifting de pestaña")
                 .description(null)
+                .price(BigDecimal.valueOf(10000))
                 .categoryName("BELLEZA")
                 .durationMinutes(60)
                 .isActive(true)
@@ -148,6 +157,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa depelicacionFacial = ServiceSpa.builder()
                 .name("Depilación facial")
                 .description(null)
+                .price(BigDecimal.valueOf(18000))
                 .categoryName("BELLEZA")
                 .durationMinutes(60)
                 .isActive(true)
@@ -158,6 +168,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa puntaDeDiamante = ServiceSpa.builder()
                 .name("Punta de diamante")
                 .description(null)
+                .price(BigDecimal.valueOf(9500))
                 .categoryName("TRATAMIENTOS FACIALES")
                 .durationMinutes(60)
                 .isActive(true)
@@ -167,6 +178,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa crioFrecuenciaFacial = ServiceSpa.builder()
                 .name("Crio frecuencia facial")
                 .description(null)
+                .price(BigDecimal.valueOf(17000))
                 .categoryName("TRATAMIENTOS FACIALES")
                 .durationMinutes(60)
                 .isActive(true)
@@ -177,6 +189,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa velaSlim = ServiceSpa.builder()
                 .name("Vela slim")
                 .description(null)
+                .price(BigDecimal.valueOf(5500))
                 .categoryName("TRATAMIENTOS CORPORALES")
                 .durationMinutes(60)
                 .isActive(true)
@@ -186,6 +199,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa dermoHealth = ServiceSpa.builder()
                 .name("dermo-health")
                 .description(null)
+                .price(BigDecimal.valueOf(23000))
                 .categoryName("TRATAMIENTOS CORPORALES")
                 .durationMinutes(60)
                 .isActive(true)
@@ -196,6 +210,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa hidromasajes = ServiceSpa.builder()
                 .name("Hidromasajes")
                 .description(null)
+                .price(BigDecimal.valueOf(14000))
                 .categoryName("GRUPALES")
                 .durationMinutes(60)
                 .isActive(true)
@@ -205,6 +220,7 @@ public class DataLoader implements CommandLineRunner {
         ServiceSpa yoga = ServiceSpa.builder()
                 .name("Yoga")
                 .description(null)
+                .price(BigDecimal.valueOf(15000))
                 .categoryName("GRUPALES")
                 .durationMinutes(60)
                 .isActive(true)

@@ -18,7 +18,10 @@ import java.time.LocalDateTime;
 public class UserDTO {
 
     // Creacion
-    
+
+    @NotBlank(message = "email is required")
+    private String email;
+
     @NotBlank(message = "Username is required")
     @Size(min = 4, max = 45, message = "Username must be between 4 and 45 characters")
     private String username;
@@ -35,6 +38,7 @@ public class UserDTO {
 
     public User toEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
+                .email(this.email)
                 .username(this.username)
                 .password(passwordEncoder.encode(this.password)) // Encriptación aquí
                 .firstName(this.firstName)

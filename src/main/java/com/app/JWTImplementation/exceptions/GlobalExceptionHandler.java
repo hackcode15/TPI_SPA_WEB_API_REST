@@ -137,4 +137,17 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(ReservationCancelledException.class)
+    public ResponseEntity<ApiResponse<String>> hadleReservationCancelledException(ReservationCancelledException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                "error",
+                ex.getMessage(),
+                null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+    }
+
 }

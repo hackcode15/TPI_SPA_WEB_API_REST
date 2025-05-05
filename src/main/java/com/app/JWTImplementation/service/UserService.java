@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,8 +8,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.app.JWTImplementation.dto.projection.UserHistoryReservationProjection;
+import com.app.JWTImplementation.dto.responses.HistoryReservationResponse;
 import com.app.JWTImplementation.dto.responses.UserReservationHistoryResponse;
 import com.app.JWTImplementation.dto.responses.UserResponse;
+import com.app.JWTImplementation.exceptions.ReservationCancelledException;
+import com.app.JWTImplementation.exceptions.ReserveNotFoundException;
+import com.app.JWTImplementation.model.Reserve;
+import com.app.JWTImplementation.model.ServiceSpa;
+import com.app.JWTImplementation.repository.ReserveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +27,7 @@ import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.model.User.Role;
 import com.app.JWTImplementation.repository.UserRepository;
 import com.app.JWTImplementation.service.impl.IUserService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -27,6 +35,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserRepository repository;
+
+    @Autowired
+    private ReserveRepository reserveRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,6 +58,7 @@ public class UserService implements IUserService {
 
         return new UserResponse(
                 user.getId(),
+                user.getEmail(),
                 user.getUsername(),
                 user.getPassword(),
                 user.getFirstName(),
@@ -156,6 +168,7 @@ public class UserService implements IUserService {
         User user = repository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
+        user.setEmail(userDetails.getEmail());
         user.setUsername(userDetails.getUsername());
 
         if(userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
@@ -176,21 +189,62 @@ public class UserService implements IUserService {
 
     // Consultas para los usuarios de tipo cliente, informacion personal
     // Listar el historial de reservas de un cliente en especifico
-    public List<UserReservationHistoryResponse> findAllUserReservationHistoryById(Integer id) {
+    public HistoryReservationResponse findAllUserReservationHistoryById(Integer id) {
+
+        User user = repository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        if (user.getRole() != Role.CUSTOMER) {
+            throw new RuntimeException("Roles other than Customer do not have booking history");
+        }
 
         List<UserHistoryReservationProjection> projections = repository.findAllHistoryReservationById(id);
 
-        // Log temporal
-        /*projections.forEach(p -> {
-            log.info("Datos recibidos: userId={}, serviceStart={}, serviceEnd={}",
-                    p.getUserId(),
-                    p.getServiceStartDatetime(),
-                    p.getServiceEndDatetime());
-        });*/
-
-        return projections.stream()
+        List<UserReservationHistoryResponse> userReservations = projections.stream()
                 .map(UserReservationHistoryResponse::fromUserReservationHistory)
                 .toList();
+
+        Integer countReservations = userReservations.size();
+        BigDecimal totalPrice = userReservations.stream()
+                .map(UserReservationHistoryResponse::getServicePrice)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return HistoryReservationResponse.builder()
+                .title(user.getFirstName() + " Reservation History")
+                .countReservation(countReservations)
+                .totalPrice(totalPrice)
+                .reservations(userReservations)
+                .build();
+
+    }
+
+    // Cancelar reserva
+    // solo pueden cancelar reservas propias
+    @Transactional
+    public Boolean cancelReservationById(Integer userId, Integer reservationId) {
+
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        Reserve reserve = reserveRepository.findById(reservationId)
+                .orElseThrow(() -> new ReserveNotFoundException(reservationId));
+
+        Integer updatedRows = repository.cancelReservationById(user.getId(), reserve.getId());
+
+        if (reserve.getUser().getId() != user.getId()) {
+            throw new ReservationCancelledException("No puedes cancelar una reserva que no te pertenece");
+        }
+
+        if (reserve.getStatus() == Reserve.StatusReserve.CANCELLED) {
+            throw new ReservationCancelledException("Ya has cancelado esta reserva");
+        }
+
+        if (updatedRows == 0) {
+            throw new ReservationCancelledException("Error al cancelar la reserva");
+        }
+
+        return true;
 
     }
     

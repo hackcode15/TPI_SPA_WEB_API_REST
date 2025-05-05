@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.app.JWTImplementation.dto.projection.UserHistoryReservationProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,6 +24,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
         r.dateReserve as reserveDateTime,
         CONCAT(u.firstName, ', ', u.lastName) as userFullName,
         s.name as serviceName,
+        s.price as servicePrice,
         sc.startDatetime as serviceStartDatetime,
         sc.endDatetime as serviceEndDatetime,
         r.status as reserveStatusName
@@ -34,5 +36,15 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     ORDER BY r.dateReserve ASC
     """)
     List<UserHistoryReservationProjection> findAllHistoryReservationById(@Param("userId") Integer userId);
+
+    @Modifying
+    @Query("""
+    UPDATE Reserve r
+    SET r.status = 'CANCELLED'
+    WHERE r.id = :reservationId
+    AND r.user.id = :userId
+    AND r.status != 'CANCELLED'
+    """)
+    Integer cancelReservationById(@Param("userId") Integer userId, @Param("reservationId") Integer reservationId);
 
 }

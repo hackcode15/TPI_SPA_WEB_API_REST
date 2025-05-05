@@ -24,6 +24,7 @@ public interface ReserveRepository extends JpaRepository<Reserve, Integer> {
         r.dateReserve as dateReserve,
         CONCAT(u.firstName, ' ', u.lastName) as userFullName,
         sc.service.name as serviceName,
+        sc.service.price as servicePrice,
         sc.startDatetime as scheduleStart,
         sc.endDatetime as scheduleEnd,
         r.status as status
@@ -39,6 +40,7 @@ public interface ReserveRepository extends JpaRepository<Reserve, Integer> {
         r.dateReserve as dateReserve,
         CONCAT(u.firstName, ' ', u.lastName) as userFullName,
         sc.service.name as serviceName,
+        sc.service.price as servicePrice,
         sc.startDatetime as scheduleStart,
         sc.endDatetime as scheduleEnd,
         r.status as status

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,6 +18,9 @@ public class ServiceSpaInfoDTO {
 
     private Integer id;
     private String name;
+
+    private BigDecimal price;
+
     private String description;
     private String category;
     private Integer durationMinutes;
@@ -26,6 +31,7 @@ public class ServiceSpaInfoDTO {
         return ServiceSpaInfoDTO.builder()
                 .id(service.getId())
                 .name(service.getName())
+                .price(service.getPrice()) //
                 .description(service.getDescription())
                 .category(service.getCategoryName())
                 .durationMinutes(service.getDurationMinutes())

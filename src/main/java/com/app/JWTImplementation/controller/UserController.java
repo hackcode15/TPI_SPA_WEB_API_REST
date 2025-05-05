@@ -40,6 +40,23 @@ public class UserController {
     private UserService userService;
 
     // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA ADMINISTRADORES Y DESARROLLADORES░░░░░░░░░░░░░░░░░
+    @Operation(
+            summary = "Mostrar Usuario por su nombre de usuario",
+            description = "Busca el usuario por el username",
+            tags = {"Usuario"},
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                            responseCode = "200",
+                            description = "Usuario obtenido exitosamente",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = UserResponse.class
+                                    )
+                            )
+                    )
+            }
+    )
     @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOPER')")
     @GetMapping("/username/{username}")
     @ResponseBody

@@ -24,6 +24,7 @@ public interface ServiceSpaRepository extends JpaRepository<ServiceSpa, Integer>
     SELECT
         s.id as id,
         s.name as name,
+        s.price as price,
         s.description as description,
         s.categoryName as categoryName,
         s.durationMinutes as durationMinutes,
@@ -37,6 +38,7 @@ public interface ServiceSpaRepository extends JpaRepository<ServiceSpa, Integer>
     SELECT
         s.id as id,
         s.name as name,
+        s.price as price,
         s.description as description,
         s.categoryName as categoryName,
         s.durationMinutes as durationMinutes,

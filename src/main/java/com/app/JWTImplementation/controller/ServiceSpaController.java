@@ -239,6 +239,7 @@ public class ServiceSpaController {
 
         ServiceSpa createdServiceSpa = ServiceSpa.builder()
                 .name(serviceSpaDetails.getName())
+                .price(serviceSpaDetails.getPrice())
                 .description(serviceSpaDetails.getDescription())
                 .categoryName(serviceSpaDetails.getCategory())
                 .durationMinutes(serviceSpaDetails.getDurationMinutes())
@@ -298,6 +299,7 @@ public class ServiceSpaController {
         ServiceSpaInfoDTO serviceSpaInfoDTO = ServiceSpaInfoDTO.builder()
                 .id(serviceSpaUpdate.getId())
                 .name(serviceSpaUpdate.getName())
+                .price(serviceSpaUpdate.getPrice())
                 .description(serviceSpaUpdate.getDescription())
                 .category(serviceSpaUpdate.getCategoryName())
                 .durationMinutes(serviceSpaUpdate.getDurationMinutes())
