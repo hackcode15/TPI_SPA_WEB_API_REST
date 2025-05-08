@@ -17,6 +17,7 @@ import java.time.LocalTime;
 public class UserReservationHistoryResponse {
 
     private Integer userId;
+    private Integer reserveId;
     private LocalDate reserveDate;
     private String userFullName;
     private String serviceName;
@@ -31,6 +32,7 @@ public class UserReservationHistoryResponse {
     public static UserReservationHistoryResponse fromUserReservationHistory(UserHistoryReservationProjection reservationHistory) {
         return UserReservationHistoryResponse.builder()
                 .userId(reservationHistory.getUserId())
+                .reserveId(reservationHistory.getReserveId())
                 .reserveDate(reservationHistory.getReserveDateTime().toLocalDate())
                 .userFullName(reservationHistory.getUserFullName())
                 .serviceName(reservationHistory.getServiceName())

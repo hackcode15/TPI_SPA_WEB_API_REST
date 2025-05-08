@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public interface UserHistoryReservationProjection {
     Integer getUserId();
+    Integer getReserveId();
     LocalDateTime getReserveDateTime();
     String getUserFullName();
     String getServiceName();
