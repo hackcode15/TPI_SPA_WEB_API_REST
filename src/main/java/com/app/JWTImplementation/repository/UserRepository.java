@@ -21,6 +21,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("""
     SELECT
         u.id as userId,
+        r.id as reserveId,
         r.dateReserve as reserveDateTime,
         CONCAT(u.firstName, ', ', u.lastName) as userFullName,
         s.name as serviceName,
