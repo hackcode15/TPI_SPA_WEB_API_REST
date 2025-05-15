@@ -2,7 +2,6 @@ package com.app.JWTImplementation.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -11,10 +10,11 @@ import com.app.JWTImplementation.dto.projection.UserHistoryReservationProjection
 import com.app.JWTImplementation.dto.responses.HistoryReservationResponse;
 import com.app.JWTImplementation.dto.responses.UserReservationHistoryResponse;
 import com.app.JWTImplementation.dto.responses.UserResponse;
+import com.app.JWTImplementation.exceptions.CancelationInvalidException;
 import com.app.JWTImplementation.exceptions.ReservationCancelledException;
 import com.app.JWTImplementation.exceptions.ReserveNotFoundException;
+import com.app.JWTImplementation.model.Customer;
 import com.app.JWTImplementation.model.Reserve;
-import com.app.JWTImplementation.model.ServiceSpa;
 import com.app.JWTImplementation.repository.ReserveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +44,6 @@ public class UserService implements IUserService {
 
     public UserResponse findUserByUsername(String username) {
 
-        /*User user = repository.findUserByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));*/
-
         Optional<User> userOptional = repository.findUserByUsername(username);
 
         if (userOptional.isEmpty()) {
@@ -70,43 +67,14 @@ public class UserService implements IUserService {
 
     }
 
-    /*@Override
-    public List<User> findAllUsers() {
-
-        return null;
-
-    }*/
-
     @Override
     public List<UserResponse> findAllUsers() {
-
-        /*List<User> users = repository.findAll();
-
-        return users.stream()
-                .map(UserResponse::fromUser)
-                .toList();*/
 
         return repository.findAll().stream()
                 .map(UserResponse::fromUser)
                 .toList();
 
     }
-
-    /*@Override
-    public User saveUser(UserDTO userDetails) {
-
-        User user = User.builder()
-            .username(userDetails.getUsername())
-            .password(passwordEncoder.encode(userDetails.getPassword()))
-            .firstName(userDetails.getFirstName())
-            .lastName(userDetails.getLastName())
-            .createAt(LocalDateTime.now())
-            .role(Role.CUSTOMER)
-            .build();
-
-        return repository.save(user);
-
-    }*/
 
     @Override
     public UserResponse saveUser(UserDTO userDetails) {
@@ -116,12 +84,6 @@ public class UserService implements IUserService {
         return UserResponse.fromUser(savedUser);
 
     }
-
-    /*@Override
-    public User findUserById(Integer id) {
-        return repository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException("Error User not found, ID: " + id + " no exist"));    
-    }*/
 
     @Override
     public UserResponse findUserById(Integer id) {
@@ -138,28 +100,6 @@ public class UserService implements IUserService {
                         .orElseThrow(() -> new UserNotFoundException(id));
         repository.deleteById(user.getId());
     }
-
-    /*@Override
-    public User updateUserById(Integer id, UserDTO userDetails) {
-
-        //User user = this.findUserById(id);
-        User user = repository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
-        user.setUsername(userDetails.getUsername());
-
-        if(userDetails.getPassword() != null && !userDetails.getPassword().isEmpty()) {
-            user.setPassword(passwordEncoder.encode(userDetails.getPassword())); // encriptar la contraseña nueva
-        }
-
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setUpdateAt(LocalDateTime.now());
-        user.setRole(Role.CUSTOMER);
-
-        return repository.save(user);
-    
-    }*/
 
     @Override
     public UserResponse updateUserById(Integer id, UserDTO userDetails) {
@@ -230,7 +170,11 @@ public class UserService implements IUserService {
         Reserve reserve = reserveRepository.findById(reservationId)
                 .orElseThrow(() -> new ReserveNotFoundException(reservationId));
 
-        Integer updatedRows = repository.cancelReservationById(user.getId(), reserve.getId());
+        //Integer updatedRows = repository.cancelReservationById(user.getId(), reserve.getId());
+
+        if (!(user instanceof Customer)) {
+            throw new CancelationInvalidException("Debes ser cliente para cancelar una reserva");
+        }
 
         if (reserve.getUser().getId() != user.getId()) {
             throw new ReservationCancelledException("No puedes cancelar una reserva que no te pertenece");
@@ -239,6 +183,8 @@ public class UserService implements IUserService {
         if (reserve.getStatus() == Reserve.StatusReserve.CANCELLED) {
             throw new ReservationCancelledException("Ya has cancelado esta reserva");
         }
+
+        Integer updatedRows = repository.cancelReservationById(user.getId(), reserve.getId());
 
         if (updatedRows == 0) {
             throw new ReservationCancelledException("Error al cancelar la reserva");

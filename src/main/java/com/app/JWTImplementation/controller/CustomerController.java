@@ -1,8 +1,12 @@
 package com.app.JWTImplementation.controller;
 
+import com.app.JWTImplementation.dto.customer.CustomerRequestDTO;
+import com.app.JWTImplementation.dto.customer.CustomerResponseDTO;
 import com.app.JWTImplementation.dto.responses.ApiResponse;
 import com.app.JWTImplementation.dto.responses.HistoryReservationResponse;
 import com.app.JWTImplementation.dto.responses.UserReservationHistoryResponse;
+import com.app.JWTImplementation.model.Customer;
+import com.app.JWTImplementation.service.CustomerService;
 import com.app.JWTImplementation.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA CLIENTES (ENDPOINTS PERSONALES)░░░░░░░░░░░░░░░░░
-@PreAuthorize("hasRole('CUSTOMER')")
+
 @RestController
 @RequestMapping("/api/user/customer/")
 @Tag(name = "Cliente", description = "Controlador para los Clientes")
@@ -25,6 +28,9 @@ public class CustomerController {
 
     @Autowired private UserService service;
 
+    @Autowired private CustomerService customerService;
+
+    // ░░░░░░░░░░░░░░ACCESIBLE SOLO PARA CLIENTES (ENDPOINTS PERSONALES)░░░░░░░░░░░░░░░░░
 
     @ResponseBody
     @Operation(
@@ -44,6 +50,7 @@ public class CustomerController {
                     )
             }
     )
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/reservation-history/{userId}")
     public ResponseEntity<ApiResponse<HistoryReservationResponse>> getAllReservationHistory(
             @PathVariable("userId") Integer userId
@@ -78,6 +85,7 @@ public class CustomerController {
                     )
             }
     )
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/{userId}/cancel-reservation/{reservationId}")
     public ResponseEntity<ApiResponse<String>> cancelReservationById(
             @PathVariable("userId") Integer userId,
@@ -90,6 +98,57 @@ public class CustomerController {
                 "Success",
                 "Reservation Cancelled",
                 null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    // CUSTOMERS
+
+    // Accesible solo para la doctora (ADMIN)
+    @GetMapping("/list")
+    @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<CustomerResponseDTO>>> getCustomers() {
+
+        ApiResponse<List<CustomerResponseDTO>> response = new ApiResponse<>(
+                "Success",
+                "Customers retrived successfully",
+                customerService.findAllCustomers()
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/{id}")
+    @ResponseBody
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<CustomerResponseDTO>> getCustomer(@PathVariable("id") Integer id) {
+
+        ApiResponse<CustomerResponseDTO> response = new ApiResponse<>(
+                "Success",
+                "Customer retrived successfully",
+                customerService.findCustomerById(id)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @PutMapping("/update/{id}")
+    @ResponseBody
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<CustomerResponseDTO>> editCustomerById(
+            @PathVariable("id") Integer id,
+            @RequestBody CustomerRequestDTO customerDetails
+            ) {
+
+        ApiResponse<CustomerResponseDTO> response = new ApiResponse<>(
+                "Success",
+                "Customer retrived successfully",
+                customerService.updateCustomer(id, customerDetails)
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);

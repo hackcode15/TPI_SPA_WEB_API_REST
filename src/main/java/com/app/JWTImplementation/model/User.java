@@ -4,24 +4,16 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,9 +22,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "tbl_user")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
 
     @Id
@@ -66,7 +59,13 @@ public class User implements UserDetails {
 
     // relacion con reserva
     // Al elimiar un Usuario se borrara sus reservas asociadas
-    @OneToMany(targetEntity = Reserve.class, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            targetEntity = Reserve.class,
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+            //fetch = FetchType.EAGER
+    )
     private List<Reserve> reserves;
 
     @Builder.Default
@@ -108,12 +107,9 @@ public class User implements UserDetails {
 
     public enum Role {
         CUSTOMER,
+        PROFESSIONAL,
         ADMIN,
         DEVELOPER
     }
-
-    // CUSTOMER
-    // ADMIN
-    // DEVELOPER
     
 }
