@@ -65,7 +65,9 @@ public class DataLoader implements CommandLineRunner {
 
     private void generateUsers() {
 
-        // ADMIN
+        // Creacion de usuarios
+
+        // DEVELOPER
         User diego = User.builder()
                 .email("taysonm895@gmail.com")
                 .username("diego")
@@ -75,45 +77,64 @@ public class DataLoader implements CommandLineRunner {
                 .role(Role.DEVELOPER)
                 .build();
 
-        // USER
-        User vale = User.builder()
+        // ADMIN
+        Admin ana = Admin.builder()
+                .email("draAnacorreo123@gmail.com")
+                .username("doctora")
+                .password(passwordEncoder.encode("1234"))
+                .firstName("Ana")
+                .lastName("Gonzales")
+                .role(Role.ADMIN)
+                .adminLevel("SUPERIOR")
+                .build();
+
+        // PROFESSIONAL
+        Professional juan = Professional.builder()
+                .email("juanmicorreo362@gmail.com")
+                .username("juan")
+                .password(passwordEncoder.encode("1234"))
+                .firstName("Juan")
+                .lastName("Cheriezzo")
+                .role(Role.PROFESSIONAL)
+                .specialty("MASAJES")
+                .license("123A")
+                .build();
+
+        // CUSTOMER
+        Customer vale = Customer.builder()
                 .email("correoinventado123@gmail.com")
                 .username("vale")
                 .password(passwordEncoder.encode("2016"))
                 .firstName("Valentina Lara")
                 .lastName("Gomez")
                 .role(Role.CUSTOMER)
+                .phone("3322456688")
+                .birthdate(LocalDate.of(2000, 4, 25))
                 .build();
 
-        // USER
-        User lidia = User.builder()
+        Customer lidia = Customer.builder()
                 .email("correonuevo123@gmail.com")
                 .username("lidia")
                 .password(passwordEncoder.encode("1984"))
                 .firstName("Lidia Celeste")
                 .lastName("Salinas")
                 .role(Role.CUSTOMER)
+                .phone("4455365945")
+                .birthdate(LocalDate.of(1984, 5, 4))
                 .build();
 
-        User juan = User.builder()
-                .email("micorreojuan123@gmail.com")
-                .username("juan")
-                .password(passwordEncoder.encode("1234"))
-                .firstName("Juan")
-                .lastName("Salinas")
-                .role(Role.ADMIN)
-                .build();
-
-        User jose = User.builder()
+        Customer jose = Customer.builder()
                 .email("correorandom123@gmail.com")
                 .username("jose")
                 .password(passwordEncoder.encode("1234"))
                 .firstName("Jose")
                 .lastName("Gomez")
                 .role(Role.CUSTOMER)
+                .phone("2555446688")
+                .birthdate(LocalDate.of(1995, 12, 17))
                 .build();
 
-        repoUser.saveAll(List.of(diego, vale, lidia, juan, jose));
+        repoUser.saveAll(List.of(diego, vale, lidia, ana, jose, juan));
 
     }
 

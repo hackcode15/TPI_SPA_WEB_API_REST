@@ -52,6 +52,7 @@ public class ReserveController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ReserveInfoDTO>>> getAllReserveWithEntities() {
         
         List<ReserveInfoDTO> reservesDTO = service.findAllReservesWhitEntities();
@@ -86,6 +87,7 @@ public class ReserveController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ReserveInfoDTO>> findReserveByIdWithEntity(@PathVariable("id") Integer id) {
 
         ReserveInfoDTO reserveInfoDTO = service.findReserveWithEntityById(id);
@@ -100,7 +102,7 @@ public class ReserveController {
 
     }
 
-    @PreAuthorize("hasRole('CUSTOMER')")
+
     @PostMapping("/new")
     @Operation(
             summary = "Nueva Reserva",
@@ -130,6 +132,7 @@ public class ReserveController {
                     )
             }
     )
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<ReserveInfoDTO>> createReservation(@Valid @RequestBody ReserveDTO reserveDetails) {
 
         Reserve reserve = service.saveReserve(reserveDetails);
@@ -176,6 +179,7 @@ public class ReserveController {
                     )
             }
     )
+    @PreAuthorize("hasRole('CUSTOMER')")
     public ResponseEntity<ApiResponse<ReserveInfoDTO>> updateReserve(
             @PathVariable("id") Integer id,
             @RequestBody ReserveDTO reserveDTO) {
@@ -215,6 +219,7 @@ public class ReserveController {
                     )
             }
     )
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<String>> deleteReserve(@PathVariable("id") Integer id) {
 
         service.deleteReserveById(id);

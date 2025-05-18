@@ -150,4 +150,30 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(CancelationInvalidException.class)
+    public ResponseEntity<ApiResponse<String>> hadleCancelationInvalidException(CancelationInvalidException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                "error",
+                ex.getMessage(),
+                null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+    }
+
+    @ExceptionHandler(CustomerNotFounException.class)
+    public ResponseEntity<ApiResponse<String>> hadleCustomerNotFounException(CustomerNotFounException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                "error",
+                ex.getMessage(),
+                null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+    }
+
 }

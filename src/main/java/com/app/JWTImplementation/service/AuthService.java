@@ -39,14 +39,18 @@ public class AuthService implements IAuthService {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        UserDetails user = userRepository.findUserByUsername(request.getUsername()).orElseThrow();
+        //UserDetails user = userRepository.findUserByUsername(request.getUsername()).orElseThrow();
 
-        String token = jwtService.getToken(user);
+        //String token = jwtService.getToken(user);
+
+
 
         // Podria utilizar solo el UserDetails para obtener el username
         // Otro paso mas para obtener el id y username
         User userLogin = userRepository.findUserByUsername(request.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not foud whit username: " + request.getUsername()));
+
+        String token = jwtService.getToken(userLogin, userLogin.getId());
 
         return AuthResponse.builder()
                 .status("Success")
@@ -74,13 +78,16 @@ public class AuthService implements IAuthService {
 
         userRepository.save(user);
 
+        String token = jwtService.getToken(user, user.getId());
+
         return AuthResponse.builder()
                 .status("Success")
                 .message("User successfully registered")
                 .idUser(user.getId()) // nuevo -> obtener el id
                 .email(user.getEmail())
                 .username(user.getUsername()) // nuevo -> obtener el username
-                .token(jwtService.getToken(user))
+                //.token(jwtService.getToken(user))
+                .token(token)
                 .build();
 
     }
