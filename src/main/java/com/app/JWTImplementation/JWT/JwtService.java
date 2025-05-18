@@ -63,7 +63,11 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String getToken(Map<String, Object> extraClaims, UserDetails user) {
+    private String getToken(Map<String, Object> extraClaims, UserDetails user, Integer userId) {
+
+        // agrego el id en el claims
+        extraClaims.put("userId", userId);
+
         return Jwts
             .builder()
             .setClaims(extraClaims)
@@ -74,8 +78,19 @@ public class JwtService {
             .compact();
     }
 
+    // metodo sobre cargado para mantener compatibilidad
     public String getToken(UserDetails user) {
-        return getToken(new HashMap<>(), user);
+        return getToken(new HashMap<>(), user, null);
+    }
+
+    public String getToken(UserDetails user, Integer userId) {
+        return getToken(new HashMap<>(), user, userId);
+    }
+
+    // metodo para extraer el userId del token
+    public Integer getUserIdFromToken(String token) {
+        final Claims claims = getAllClaims(token);
+        return claims.get("userId", Integer.class);
     }
 
 }
