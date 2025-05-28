@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 //import java.util.stream.Collectors;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -169,6 +170,32 @@ public class GlobalExceptionHandler {
         ApiResponse<String> response = new ApiResponse<>(
                 "error",
                 ex.getMessage(),
+                null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+    }
+
+    @ExceptionHandler(ProfessionalNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> hadleProfessionalNotFoundException(ProfessionalNotFoundException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                "error",
+                ex.getMessage(),
+                null
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ApiResponse<String>> hadleExpiredJwtException(ExpiredJwtException ex) {
+
+        ApiResponse<String> response = new ApiResponse<>(
+                "error",
+                "Token JWT expired",
                 null
         );
 

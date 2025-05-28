@@ -41,6 +41,11 @@ public class Reserve {
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
 
+    // 1 reserva pertenece a un profesional
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professional_id", nullable = false)
+    private Professional professional;
+
     // Metodo helper para acceder al servicio indirectamente
     public ServiceSpa getService() {
         return this.schedule.getService();

@@ -27,10 +27,12 @@ public interface ReserveRepository extends JpaRepository<Reserve, Integer> {
         sc.service.price as servicePrice,
         sc.startDatetime as scheduleStart,
         sc.endDatetime as scheduleEnd,
+        CONCAT(p.firstName, ' ', p.lastName) as professionalName,
         r.status as status
     FROM Reserve r
     JOIN r.user u
     JOIN r.schedule sc
+    JOIN r.professional p
     """)
     List<ReserveProjection> findAllReservesProjection();
 
@@ -43,10 +45,12 @@ public interface ReserveRepository extends JpaRepository<Reserve, Integer> {
         sc.service.price as servicePrice,
         sc.startDatetime as scheduleStart,
         sc.endDatetime as scheduleEnd,
+        CONCAT(p.firstName, ' ', p.lastName) as professionalName,
         r.status as status
     FROM Reserve r
     JOIN r.user u
     JOIN r.schedule sc
+    JOIN r.professional p
     WHERE r.id = :id
     """)
     Optional<ReserveProjection> findReserveProjectionById(@Param("id") Integer id);
