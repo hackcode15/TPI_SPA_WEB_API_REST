@@ -1,8 +1,11 @@
 package com.app.JWTImplementation.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.app.JWTImplementation.dto.ReserveDTO;
@@ -34,6 +37,9 @@ public class ReserveService implements IReserveService {
 
     @Autowired
     private ServiceSpaRepository serviceSpaRepository;
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     @Override
     public List<Reserve> findAllReserves() {
@@ -118,8 +124,9 @@ public class ReserveService implements IReserveService {
                 .dateReserve(LocalDateTime.now())
                 .user(user)
                 .schedule(schedule)
-                .status(Reserve.StatusReserve.CONFIRMED)
+                .status(Reserve.StatusReserve.PENDING)
                 .professional(professional)
+                .pricePaid(schedule.getService().getPrice())
                 .build();
 
         return repository.save(reserve);

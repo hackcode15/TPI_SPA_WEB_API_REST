@@ -1,4 +1,3 @@
-/*
 package com.app.JWTImplementation;
 
 import java.io.InputStream;
@@ -100,6 +99,17 @@ public class DataLoader implements CommandLineRunner {
                 .license("123A")
                 .build();
 
+        Professional tiago = Professional.builder()
+                .email("tiagomicorreo362@gmail.com")
+                .username("tiago")
+                .password(passwordEncoder.encode("1234"))
+                .firstName("Tiago")
+                .lastName("Salinas")
+                .role(Role.PROFESSIONAL)
+                .specialty("BELLEZA")
+                .license("123A")
+                .build();
+
         // CUSTOMER
         Customer vale = Customer.builder()
                 .email("correoinventado123@gmail.com")
@@ -134,7 +144,9 @@ public class DataLoader implements CommandLineRunner {
                 .birthdate(LocalDate.of(1995, 12, 17))
                 .build();
 
-        repoUser.saveAll(List.of(diego, vale, lidia, ana, jose, juan));
+        repoUser.saveAll(List.of(diego, vale, lidia, ana, jose, juan, tiago));
+
+        //repoUser.save(tiago);
 
     }
 
@@ -288,4 +300,3 @@ public class DataLoader implements CommandLineRunner {
     }
 
 }
-*/

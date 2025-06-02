@@ -111,5 +111,19 @@ public class User implements UserDetails {
         ADMIN,
         DEVELOPER
     }
+
+    public Customer asCustomer() {
+        if (this instanceof Customer) {
+            return (Customer) this;
+        }
+        throw new IllegalStateException("El usuario no es un Customer");
+    }
+
+    public Professional asProfessional() {
+        if (this instanceof Professional) {
+            return (Professional) this;
+        }
+        throw new IllegalStateException("El usuario no es un Professional");
+    }
     
 }

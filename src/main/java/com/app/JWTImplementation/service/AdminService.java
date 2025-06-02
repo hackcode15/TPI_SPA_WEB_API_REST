@@ -1,16 +1,21 @@
 package com.app.JWTImplementation.service;
 
 import com.app.JWTImplementation.dto.admin.SaveNewUserDTO;
+import com.app.JWTImplementation.dto.responses.TotalIncomeHistory;
 import com.app.JWTImplementation.model.Customer;
 import com.app.JWTImplementation.model.Professional;
 import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.repository.CustomerRepository;
+import com.app.JWTImplementation.repository.InvoiceRepository;
 import com.app.JWTImplementation.repository.ProfessionalRepository;
 import com.app.JWTImplementation.service.impl.IAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 public class AdminService implements IAdminService {
@@ -23,6 +28,9 @@ public class AdminService implements IAdminService {
 
     @Autowired
     private ProfessionalRepository professionalRepository;
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     @Override
     @Transactional
@@ -65,6 +73,18 @@ public class AdminService implements IAdminService {
 
         //return "Error al cargar un nuevo usuario";
         throw new IllegalStateException("Flujo inesperado en creación de usuario");
+
+    }
+
+    public TotalIncomeHistory getTotalIncomeHistory(LocalDate startDate, LocalDate endDate) {
+
+        BigDecimal total = invoiceRepository.getTotalIncome(startDate, endDate);
+
+        return TotalIncomeHistory.builder()
+                .totalPrice(total)
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
 
     }
 

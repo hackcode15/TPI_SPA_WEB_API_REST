@@ -1,10 +1,12 @@
 package com.app.JWTImplementation.controller;
 
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "Autenticación", description = "Controlador para la Autenticación")
 public class AuthController {
-    
+
     private final AuthService authService;
 
     @PostMapping("/login")
@@ -88,12 +90,9 @@ public class AuthController {
                     )
             }
     )
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-
-        AuthResponse response = authService.register(request);
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) throws MessagingException {
+        //AuthResponse response = authService.register(request);
+        return new ResponseEntity<>(authService.register(request), HttpStatus.CREATED);
     }
 
 }
