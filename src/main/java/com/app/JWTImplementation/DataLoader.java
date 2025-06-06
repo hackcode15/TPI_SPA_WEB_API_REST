@@ -79,7 +79,7 @@ public class DataLoader implements CommandLineRunner {
         // ADMIN
         Admin ana = Admin.builder()
                 .email("draAnacorreo123@gmail.com")
-                .username("doctora")
+                .username("admin")
                 .password(passwordEncoder.encode("1234"))
                 .firstName("Ana")
                 .lastName("Gonzales")
