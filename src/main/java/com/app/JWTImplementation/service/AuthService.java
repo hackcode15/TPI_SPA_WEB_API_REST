@@ -65,6 +65,7 @@ public class AuthService implements IAuthService {
                 .idUser(userLogin.getId())
                 .email(userLogin.getEmail())
                 .username(userLogin.getUsername())
+                .rol(userLogin.getRole().name())
                 .token(token)
                 .build();
 

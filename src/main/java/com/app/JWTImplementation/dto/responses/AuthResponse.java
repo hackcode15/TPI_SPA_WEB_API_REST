@@ -21,5 +21,6 @@ public class AuthResponse {
     private Integer idUser;
     private String email;
     private String username;
+    private String rol;
     
 }
