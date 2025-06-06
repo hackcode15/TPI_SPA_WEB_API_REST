@@ -1,5 +1,6 @@
 package com.app.JWTImplementation.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.app.JWTImplementation.exceptions.InvalidReservationException;
@@ -41,6 +42,19 @@ public class Reserve {
     @JoinColumn(name = "schedule_id", nullable = false)
     private Schedule schedule;
 
+    // 1 reserva pertenece a un profesional
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "professional_id", nullable = false)
+    private Professional professional;
+
+    // Precio pagado en la reserva
+    @Column(name = "price_paid", nullable = false, precision = 10, scale = 2)
+    private BigDecimal pricePaid;
+
+    // Relación con la factura (una reserva tiene una factura)
+    @OneToOne(mappedBy = "reserve", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Invoice invoice;
+
     // Metodo helper para acceder al servicio indirectamente
     public ServiceSpa getService() {
         return this.schedule.getService();
@@ -49,7 +63,8 @@ public class Reserve {
     public enum StatusReserve {
         CONFIRMED,
         CANCELLED,
-        COMPLETED
+        COMPLETED,
+        PENDING
     }
 
 }

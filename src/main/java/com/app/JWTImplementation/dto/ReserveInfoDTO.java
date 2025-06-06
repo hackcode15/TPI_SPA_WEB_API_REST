@@ -24,5 +24,6 @@ public class ReserveInfoDTO {
     private LocalDate startDate;
     private LocalTime startTime;
     private LocalTime endTime;
+    private String professionalName;
     private StatusReserve status;
 }

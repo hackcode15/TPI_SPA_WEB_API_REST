@@ -1,25 +1,22 @@
 package com.app.JWTImplementation.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.app.JWTImplementation.dto.ReserveDTO;
 import com.app.JWTImplementation.exceptions.*;
-import com.app.JWTImplementation.model.Schedule;
-import com.app.JWTImplementation.model.ServiceSpa;
-import com.app.JWTImplementation.model.User;
-import com.app.JWTImplementation.repository.ScheduleRepository;
-import com.app.JWTImplementation.repository.ServiceSpaRepository;
-import com.app.JWTImplementation.repository.UserRepository;
+import com.app.JWTImplementation.model.*;
+import com.app.JWTImplementation.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.JWTImplementation.dto.ReserveInfoDTO;
 import com.app.JWTImplementation.dto.projection.ReserveProjection;
-import com.app.JWTImplementation.model.Reserve;
-import com.app.JWTImplementation.repository.ReserveRepository;
 import com.app.JWTImplementation.service.impl.IReserveService;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +30,16 @@ public class ReserveService implements IReserveService {
     private UserRepository userRepository;
 
     @Autowired
+    private ProfessionalRepository professionalRepository;
+
+    @Autowired
     private ScheduleRepository scheduleRepository;
 
     @Autowired
     private ServiceSpaRepository serviceSpaRepository;
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
 
     @Override
     public List<Reserve> findAllReserves() {
@@ -51,8 +54,18 @@ public class ReserveService implements IReserveService {
             throw new InvalidReservationException("Debe proporcionar scheduleId o (serviceId + selectedTime)");
         }
 
+        // Verificar si el usuario existe
         User user = userRepository.findById(reserveDetails.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(reserveDetails.getUserId()));
+
+        // verificar que el usuario sea de tipo CUSTOMER
+        if (!(user instanceof Customer)) {
+            throw new InvalidReservationException("Solo los usuarios con rol de CLIENTE pueden realizar reservas");
+        }
+
+        // Verificar si el professional existe
+        Professional professional = professionalRepository.findById(reserveDetails.getProfessionalId())
+                .orElseThrow(() -> new ProfessionalNotFoundException(reserveDetails.getProfessionalId()));
 
         Schedule schedule;
         if (reserveDetails.getScheduleId() != null) {
@@ -97,7 +110,7 @@ public class ReserveService implements IReserveService {
                         .isActive(true)
                         .build();
 
-                schedule = scheduleRepository.save(schedule); // No olvides guardar el nuevo horario
+                schedule = scheduleRepository.save(schedule); // guarda el horario
             }
         }
 
@@ -111,21 +124,27 @@ public class ReserveService implements IReserveService {
                 .dateReserve(LocalDateTime.now())
                 .user(user)
                 .schedule(schedule)
-                .status(Reserve.StatusReserve.CONFIRMED)
+                .status(Reserve.StatusReserve.PENDING)
+                .professional(professional)
+                .pricePaid(schedule.getService().getPrice())
                 .build();
 
         return repository.save(reserve);
     }
 
-    // NO haria falta - para ahorrandos trabajo
-    // Hacer unicamente la baja de reserva
+    // revisar
     @Override
     @Transactional
     public Reserve updateReserve(Integer id, ReserveDTO reserveDetails) {
 
+        // verificar si existe la reserva
         Reserve reserve = this.findReserveById(id);
+
+        // verificar si existe el usuario
         User user = userRepository.findById(reserveDetails.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(id));
+
+        // verificar si existe el horario
         Schedule schedule = scheduleRepository.findById(id)
                 .orElseThrow(() -> new ScheduleNotFoundException(id));
 
@@ -166,6 +185,7 @@ public class ReserveService implements IReserveService {
                             .startDate(reserve.getScheduleStart().toLocalDate())
                             .startTime(reserve.getScheduleStart().toLocalTime())
                             .endTime(reserve.getScheduleEnd().toLocalTime())
+                            .professionalName(reserve.getProfessionalName())
                             .status(reserve.getStatus())
                             .build();
 
@@ -191,6 +211,7 @@ public class ReserveService implements IReserveService {
                 .startDate(reserve.getScheduleStart().toLocalDate())
                 .startTime(reserve.getScheduleStart().toLocalTime())
                 .endTime(reserve.getScheduleEnd().toLocalTime())
+                .professionalName(reserve.getProfessionalName())
                 .status(reserve.getStatus())
                 .build();
 

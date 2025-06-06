@@ -19,5 +19,6 @@ public class ReserveDTO {
     private Integer scheduleId; // Para horarios existentes
     private LocalDateTime selectedTime; // Para nuevos horarios
     private Integer serviceId; // Para nuevos horarios
+    private Integer professionalId;
 
 }

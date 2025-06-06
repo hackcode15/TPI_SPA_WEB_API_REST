@@ -34,7 +34,7 @@ public class ServiceSpa {
     @Column(nullable = false, length = 45)
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
     @Column(length = 150)

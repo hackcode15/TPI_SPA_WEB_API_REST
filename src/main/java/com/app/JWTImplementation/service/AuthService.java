@@ -2,8 +2,11 @@ package com.app.JWTImplementation.service;
 
 import java.time.LocalDateTime;
 
+import com.app.JWTImplementation.dto.EmailDTO;
 import com.app.JWTImplementation.exceptions.UserNotFoundException;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +37,12 @@ public class AuthService implements IAuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
+
     @Override
     public AuthResponse login(LoginRequest request) {
 
@@ -42,8 +51,6 @@ public class AuthService implements IAuthService {
         //UserDetails user = userRepository.findUserByUsername(request.getUsername()).orElseThrow();
 
         //String token = jwtService.getToken(user);
-
-
 
         // Podria utilizar solo el UserDetails para obtener el username
         // Otro paso mas para obtener el id y username
@@ -58,13 +65,14 @@ public class AuthService implements IAuthService {
                 .idUser(userLogin.getId())
                 .email(userLogin.getEmail())
                 .username(userLogin.getUsername())
+                .rol(userLogin.getRole().name())
                 .token(token)
                 .build();
 
     }
 
     @Override
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse register(RegisterRequest request) throws MessagingException {
 
         User user = User.builder()
                 .email(request.getEmail())
@@ -79,6 +87,29 @@ public class AuthService implements IAuthService {
         userRepository.save(user);
 
         String token = jwtService.getToken(user, user.getId());
+
+        /*EmailDTO email = EmailDTO.builder()
+                .addressee(user.getEmail())
+                .subjet("¡Tu cuenta ha sido creada! | SPA SENTIRSE BIEN")
+                .message(user.getFirstName() + ", " + user.getLastName()) // de momento lo usuamos para pasar el nombre del usuario
+                .build();
+
+        emailService.sendEmail(email);*/
+
+        // Envío asíncrono del correo para que no bloquee la respuesta al usuario
+        taskExecutor.execute(() -> {
+            try {
+                EmailDTO email = EmailDTO.builder()
+                        .addressee(user.getEmail())
+                        .subjet("¡Tu cuenta ha sido creada! | SPA SENTIRSE BIEN")
+                        .message(user.getFirstName() + ", " + user.getLastName())
+                        .build();
+                emailService.sendEmail(email);
+            } catch (Exception e) {
+                // Loggear el error pero no interrumpir el flujo
+                System.err.println("Error enviando email: " + e.getMessage());
+            }
+        });
 
         return AuthResponse.builder()
                 .status("Success")

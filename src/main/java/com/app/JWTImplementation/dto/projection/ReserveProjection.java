@@ -13,5 +13,6 @@ public interface ReserveProjection {
     BigDecimal getServicePrice();
     LocalDateTime getScheduleStart();
     LocalDateTime getScheduleEnd();
+    String getProfessionalName();
     StatusReserve getStatus();
 }

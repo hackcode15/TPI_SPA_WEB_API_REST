@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA Sentirse Bien</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4a90e2;
+        }
+
+        .title {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #34495e;
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .btn-web {
+            display: inline-block;
+            background-color: #4a90e2;
+            color: white !important;
+            padding: 12px 25px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-weight: 500;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-web:hover {
+            background-color: #3a7bc8;
+        }
+
+        p {
+            margin: 15px 0;
+            color: #555555;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!--<img th:src="@{/images/logo2-sinfondo.png}" alt="logo spa" class="logo" />-->
+
+    <h1 class="title" th:text="'¡Hola! ' + (${message} ?: '') + ' 👋'"></h1>
+    <h2 class="subtitle">¡Bienvenido/a a SPA <a href="https://spa-sentirsebien.netlify.app/" target="_blank">Sentirse Bien!</a></h2>
+    <!--<p class="message" th:text="${message}"></p>-->
+
+    <p>Ya te registraste en <strong>Spa Sentirse Bien</strong>, ahora puedes disfrutar de los beneficios que tenemos para tí.</p>
+
+    <p>No esperes más y reserva en los mejores salones</p>
+
+    <a class="btn-web" href="https://spa-sentirsebien.netlify.app/" target="_blank">Comenzar ahora</a>
+</div>
+
+</body>
+</html>
