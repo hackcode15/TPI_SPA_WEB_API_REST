@@ -1,6 +1,6 @@
 package com.app.JWTImplementation.controller;
 
-import com.app.JWTImplementation.dto.EmailDTO;
+import com.app.JWTImplementation.dto.EmailRegisterDTO;
 import com.app.JWTImplementation.service.EmailService;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class EmailController {
     private EmailService emailService;
 
     @PostMapping
-    private ResponseEntity<String> sendEmail(@RequestBody EmailDTO email) throws MessagingException {
+    private ResponseEntity<String> sendEmail(@RequestBody EmailRegisterDTO email) throws MessagingException {
         emailService.sendEmail(email);
         return new ResponseEntity<>("Email sending successfully", HttpStatus.OK);
     }

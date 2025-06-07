@@ -59,9 +59,9 @@ public class ReserveService implements IReserveService {
                 .orElseThrow(() -> new UserNotFoundException(reserveDetails.getUserId()));
 
         // verificar que el usuario sea de tipo CUSTOMER
-        if (!(user instanceof Customer)) {
+        /*if (!(user instanceof Customer)) {
             throw new InvalidReservationException("Solo los usuarios con rol de CLIENTE pueden realizar reservas");
-        }
+        }*/
 
         // Verificar si el professional existe
         Professional professional = professionalRepository.findById(reserveDetails.getProfessionalId())

@@ -1,24 +1,36 @@
 package com.app.JWTImplementation.service;
 
+import com.app.JWTImplementation.dto.EmailInvoiceDTO;
 import com.app.JWTImplementation.dto.InvoiceDTO;
+import com.app.JWTImplementation.dto.projection.InvoiceProjection;
 import com.app.JWTImplementation.dto.responses.TotalIncomeHistory;
 import com.app.JWTImplementation.exceptions.InvalidReservationException;
 import com.app.JWTImplementation.exceptions.ReserveNotFoundException;
 import com.app.JWTImplementation.model.Customer;
 import com.app.JWTImplementation.model.Invoice;
 import com.app.JWTImplementation.model.Reserve;
+import com.app.JWTImplementation.model.User;
+import com.app.JWTImplementation.repository.CustomerRepository;
 import com.app.JWTImplementation.repository.InvoiceRepository;
 import com.app.JWTImplementation.repository.ReserveRepository;
 import com.app.JWTImplementation.service.impl.IInvoiceService;
+import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -29,6 +41,15 @@ public class InvoiceService implements IInvoiceService {
 
     @Autowired
     private ReserveRepository reserveRepository;
+
+    @Autowired
+    private TaskExecutor taskExecutor;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Transactional
     public InvoiceDTO generateInvoiceForReserve(Integer reserveId, String paymentMethod) {
@@ -154,6 +175,145 @@ public class InvoiceService implements IInvoiceService {
 
     @Override
     public void deleteInvoiceById(Integer id) {
+
+    }
+
+
+    // Metodo para generar la factura - solo para pruebas locales
+    /*@Transactional
+    public void generateInvoicePDF(Integer idReserve) throws JRException {
+
+        String destinationPath = "src" + File.separator +
+                "main" + File.separator +
+                "resources" + File.separator +
+                "static" + File.separator +
+                "ReportGenerated.pdf";
+
+        String filePath = "src" + File.separator +
+                "main" + File.separator +
+                "resources" + File.separator +
+                "templates" + File.separator +
+                "report" + File.separator +
+                "Report.jrxml";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+        InvoiceProjection details = invoiceRepository.findByReserveId(idReserve)
+                .orElseThrow(() -> new ReserveNotFoundException(idReserve));
+
+        // BigDecimal total = details.getSubtotal().add(details.getTaxAmount());
+
+        Reserve reserve = reserveRepository.findById(details.getReserveId())
+                .orElseThrow(() -> new ReserveNotFoundException(idReserve));
+
+        String paymentMethod = switch (details.getPaymentMethod()) {
+            case "CASH" -> "Efectivo";
+            case "CREDIT_CARD" -> "Tarjeta de credito";
+            case "DEBIT_CARD" -> "Tarjeta de debito";
+            case "BANK_TRANSFER" -> "Transferencia bancaria";
+            default -> "OTHER";
+        };
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("customer_fullname", details.getCustomerName());
+        parameters.put("customer_email", details.getCustomerEmail());
+        parameters.put("customer_phone", details.getCustomerIdentification());
+        parameters.put("invoice_number", details.getInvoiceNumber());
+        parameters.put("invoice_issue_date", formatter.format(LocalDateTime.now()));
+        parameters.put("payment_method", paymentMethod);
+        parameters.put("total_paid", details.getTotal());
+        parameters.put("reserve_id", details.getReserveId());
+        parameters.put("service_name", reserve.getService().getName());
+        parameters.put("subtotal",  details.getSubtotal());
+        parameters.put("tax_amount", details.getTaxAmount());
+        parameters.put("total", details.getTotal());
+        parameters.put("imageDir", "classpath:/static/images/");
+
+        JasperReport report = JasperCompileManager.compileReport(filePath);
+        JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+        JasperExportManager.exportReportToPdfFile(print, destinationPath);
+
+        System.out.println("Report created successfully");
+
+    }*/
+
+    // metodo para generar y enviar la factura por correo - uso en produccion
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void generateAndSendInvoice(Integer idReserve) {
+        taskExecutor.execute(() -> {
+            try {
+                // 1. Obtener los datos de la factura usando tu proyección
+                InvoiceProjection invoiceProjection = invoiceRepository.findByReserveId(idReserve)
+                        .orElseThrow(() -> new ReserveNotFoundException(idReserve));
+
+                // 2. Generar el PDF directamente desde la proyección
+                byte[] pdfBytes = generateInvoicePDF(invoiceProjection);
+
+                // 3. Enviar el correo
+                EmailInvoiceDTO emailDTO = EmailInvoiceDTO.builder()
+                        .addressee(invoiceProjection.getCustomerEmail())
+                        .customerName(invoiceProjection.getCustomerName())
+                        .pdfAttachment(pdfBytes)
+                        .build();
+
+                emailService.sendInvoiceEmail(emailDTO);
+
+            } catch (Exception e) {
+                System.out.println("Error al enviar factura para reserva " + idReserve);
+            }
+        });
+    }
+
+    private byte[] generateInvoicePDF(InvoiceProjection details) throws JRException {
+
+        String destinationPath = "src" + File.separator +
+                "main" + File.separator +
+                "resources" + File.separator +
+                "static" + File.separator +
+                "ReportGenerated.pdf";
+
+        String filePath = "src" + File.separator +
+                "main" + File.separator +
+                "resources" + File.separator +
+                "templates" + File.separator +
+                "report" + File.separator +
+                "Report.jrxml";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+        String paymentMethod = switch (details.getPaymentMethod()) {
+            case "CASH" -> "Efectivo";
+            case "CREDIT_CARD" -> "Tarjeta de credito";
+            case "DEBIT_CARD" -> "Tarjeta de debito";
+            case "BANK_TRANSFER" -> "Transferencia bancaria";
+            default -> "OTHER";
+        };
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("customer_fullname", details.getCustomerName());
+        parameters.put("customer_email", details.getCustomerEmail());
+        parameters.put("customer_phone", details.getCustomerIdentification());
+        parameters.put("invoice_number", details.getInvoiceNumber());
+        parameters.put("invoice_issue_date", formatter.format(details.getIssueDate()));
+        parameters.put("payment_method", paymentMethod);
+        parameters.put("total_paid", details.getTotal());
+        parameters.put("reserve_id", details.getReserveId());
+        parameters.put("service_name", details.getServiceName());
+        parameters.put("subtotal",  details.getSubtotal());
+        parameters.put("tax_amount", details.getTaxAmount());
+        parameters.put("total", details.getTotal());
+        parameters.put("imageDir", "classpath:/static/images/");
+
+        /*String templatePath = "classpath:templates/report/Report.jrxml";
+        InputStream templateStream = getClass().getResourceAsStream("/templates/report/Report.jrxml");
+        JasperReport report = JasperCompileManager.compileReport(templateStream);
+        JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+        return JasperExportManager.exportReportToPdf(print);*/
+
+        JasperReport report = JasperCompileManager.compileReport(filePath);
+        JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+
+        return JasperExportManager.exportReportToPdf(print);
 
     }
 

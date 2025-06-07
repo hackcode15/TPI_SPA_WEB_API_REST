@@ -2,14 +2,13 @@ package com.app.JWTImplementation.service;
 
 import java.time.LocalDateTime;
 
-import com.app.JWTImplementation.dto.EmailDTO;
+import com.app.JWTImplementation.dto.EmailRegisterDTO;
 import com.app.JWTImplementation.exceptions.UserNotFoundException;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -99,7 +98,7 @@ public class AuthService implements IAuthService {
         // Envío asíncrono del correo para que no bloquee la respuesta al usuario
         taskExecutor.execute(() -> {
             try {
-                EmailDTO email = EmailDTO.builder()
+                EmailRegisterDTO email = EmailRegisterDTO.builder()
                         .addressee(user.getEmail())
                         .subjet("¡Tu cuenta ha sido creada! | SPA SENTIRSE BIEN")
                         .message(user.getFirstName() + ", " + user.getLastName())
