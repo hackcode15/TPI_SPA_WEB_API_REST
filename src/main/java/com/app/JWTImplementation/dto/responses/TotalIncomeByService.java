@@ -12,13 +12,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TotalIncomeByProfessional {
-
-    private Integer idProfessional;
-    private String nameProfessional;
-    private String specialtyProfessional;
+public class TotalIncomeByService {
+    private Integer idService;
+    private String serviceName;
+    private String serviceCategoryName;
+    private String type;
+    private BigDecimal price;
     private Integer count;
     private BigDecimal totalPrice;
     private List<ReservesTotalIncomes> reserves;
-
 }

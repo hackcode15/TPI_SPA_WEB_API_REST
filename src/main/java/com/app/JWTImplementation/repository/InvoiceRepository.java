@@ -65,6 +65,28 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
 
+    @Query(
+    """
+    SELECT
+        r.id as idReserve,
+        r.dateReserve as dateReserve,
+        r.pricePaid as price,
+        CONCAT(u.firstName, ', ', u.lastName) as customerFullName,
+        sc.startDatetime as dateTurn,
+        s.name as serviceName,
+        r.status as statusReserve
+    FROM Invoice i
+    JOIN i.reserve r
+    JOIN r.schedule sc
+    JOIN r.user u
+    JOIN sc.service s
+    WHERE s.id = :idService and DATE(sc.startDatetime) BETWEEN :startDate AND :endDate
+    """)
+    List<TotalIncomeByProfessionalProjection> getTotalIncomeByService(
+            @Param("idService") Integer idService,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
 
     @Query(
     """

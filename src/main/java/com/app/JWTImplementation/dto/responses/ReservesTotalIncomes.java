@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ReservesByProfessional {
+public class ReservesTotalIncomes {
 
     // datos de la reserva
     private Integer idReserve;

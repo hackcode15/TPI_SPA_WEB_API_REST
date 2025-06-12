@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.app.JWTImplementation.dto.ReserveDTO;
 import com.app.JWTImplementation.dto.responses.TotalIncomeByProfessional;
+import com.app.JWTImplementation.dto.responses.TotalIncomeByService;
 import com.app.JWTImplementation.model.Reserve;
 import com.app.JWTImplementation.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -233,7 +234,7 @@ public class ReserveController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSIONAL')")
-    @GetMapping("/total-income")
+    @GetMapping("/total-income/professional")
     @ResponseBody
     public ResponseEntity<ApiResponse<TotalIncomeByProfessional>> getTotalIncomeByProfessional(
             @RequestParam("idProfessional") Integer idProfessional,
@@ -245,6 +246,25 @@ public class ReserveController {
                 "Success",
                 "Retrived total income of reservations successfully",
                 adminService.getTotalIncomeByProfessional(idProfessional, startDate, endDate)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/total-income/service")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<TotalIncomeByService>> getTotalIncomeByService(
+            @RequestParam("idService") Integer idService,
+            @RequestParam("startDate") LocalDate startDate,
+            @RequestParam("endDate") LocalDate endDate
+    ) {
+
+        ApiResponse<TotalIncomeByService> response = new ApiResponse<>(
+                "Success",
+                "Retrived total incomes by service",
+                adminService.getTotalIncomeByService(idService, startDate, endDate)
         );
 
         return new ResponseEntity<>(response, HttpStatus.OK);

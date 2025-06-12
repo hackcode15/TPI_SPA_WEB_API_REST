@@ -2,16 +2,20 @@ package com.app.JWTImplementation.service;
 
 import com.app.JWTImplementation.dto.admin.SaveNewUserDTO;
 import com.app.JWTImplementation.dto.projection.TotalIncomeByProfessionalProjection;
-import com.app.JWTImplementation.dto.responses.ReservesByProfessional;
+import com.app.JWTImplementation.dto.responses.TotalIncomeByService;
+import com.app.JWTImplementation.dto.responses.ReservesTotalIncomes;
 import com.app.JWTImplementation.dto.responses.TotalIncomeByProfessional;
 import com.app.JWTImplementation.dto.responses.TotalIncomeHistory;
 import com.app.JWTImplementation.exceptions.ProfessionalNotFoundException;
+import com.app.JWTImplementation.exceptions.ServiceSpaNotFoundException;
 import com.app.JWTImplementation.model.Customer;
 import com.app.JWTImplementation.model.Professional;
+import com.app.JWTImplementation.model.ServiceSpa;
 import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.repository.CustomerRepository;
 import com.app.JWTImplementation.repository.InvoiceRepository;
 import com.app.JWTImplementation.repository.ProfessionalRepository;
+import com.app.JWTImplementation.repository.ServiceSpaRepository;
 import com.app.JWTImplementation.service.impl.IAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +41,9 @@ public class AdminService implements IAdminService {
 
     @Autowired
     private InvoiceRepository invoiceRepository;
+
+    @Autowired
+    private ServiceSpaRepository serviceSpaRepository;
 
     @Override
     @Transactional
@@ -120,9 +127,60 @@ public class AdminService implements IAdminService {
         response.setCount(countReservation);
         response.setTotalPrice(totalPrice);
 
-        List<ReservesByProfessional> reserves = reservesResponse.stream()
+        List<ReservesTotalIncomes> reserves = reservesResponse.stream()
                 .map(p -> {
-                    return ReservesByProfessional.builder()
+                    return ReservesTotalIncomes.builder()
+                            .idReserve(p.getIdReserve())
+                            .dateReserve(p.getDateReserve().toLocalDate())
+                            .timeReserve(p.getDateReserve().toLocalTime())
+                            .priceReserve(p.getPrice())
+                            .statusReserve(p.getStatusReserve())
+                            .nameCustomer(p.getCustomerFullName())
+                            .dateTurn(p.getDateTurn().toLocalDate())
+                            .timeTurn(p.getDateTurn().toLocalTime())
+                            .nameService(p.getServiceName())
+                            .build();
+                })
+                .toList();
+
+        response.setReserves(reserves);
+
+        return response;
+
+    }
+
+    public TotalIncomeByService getTotalIncomeByService(
+            Integer idService,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+
+        ServiceSpa service = serviceSpaRepository.findById(idService)
+                .orElseThrow(() -> new ServiceSpaNotFoundException(idService));
+
+        TotalIncomeByService response = new TotalIncomeByService();
+
+        response.setIdService(service.getId());
+        response.setServiceName(service.getName());
+        response.setServiceCategoryName(service.getCategoryName());
+        response.setType(service.getIsGroupService() ? "GROUP" : "INDIVIDUAL");
+        response.setPrice(service.getPrice());
+
+        List<TotalIncomeByProfessionalProjection> reservesResponse = invoiceRepository.getTotalIncomeByService(idService, startDate, endDate);
+
+        Integer count = reservesResponse.size();
+
+        BigDecimal totalPrice = reservesResponse.stream()
+                .map(TotalIncomeByProfessionalProjection::getPrice)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        response.setCount(count);
+        response.setTotalPrice(totalPrice);
+
+        List<ReservesTotalIncomes> reserves = reservesResponse.stream()
+                .map(p -> {
+                    return ReservesTotalIncomes.builder()
                             .idReserve(p.getIdReserve())
                             .dateReserve(p.getDateReserve().toLocalDate())
                             .timeReserve(p.getDateReserve().toLocalTime())
