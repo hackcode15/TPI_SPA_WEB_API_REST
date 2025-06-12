@@ -1,7 +1,11 @@
 package com.app.JWTImplementation.service;
 
 import com.app.JWTImplementation.dto.admin.SaveNewUserDTO;
+import com.app.JWTImplementation.dto.projection.TotalIncomeByProfessionalProjection;
+import com.app.JWTImplementation.dto.responses.ReservesByProfessional;
+import com.app.JWTImplementation.dto.responses.TotalIncomeByProfessional;
 import com.app.JWTImplementation.dto.responses.TotalIncomeHistory;
+import com.app.JWTImplementation.exceptions.ProfessionalNotFoundException;
 import com.app.JWTImplementation.model.Customer;
 import com.app.JWTImplementation.model.Professional;
 import com.app.JWTImplementation.model.User;
@@ -16,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AdminService implements IAdminService {
@@ -85,6 +91,54 @@ public class AdminService implements IAdminService {
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();
+
+    }
+
+    public TotalIncomeByProfessional getTotalIncomeByProfessional(
+            Integer idProfessional,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+
+        Professional professional = professionalRepository.findById(idProfessional)
+                .orElseThrow(() -> new ProfessionalNotFoundException(idProfessional));
+
+        TotalIncomeByProfessional response = new TotalIncomeByProfessional();
+
+        response.setIdProfessional(professional.getId());
+        response.setNameProfessional(professional.getFirstName() + ", " + professional.getLastName());
+        response.setSpecialtyProfessional(professional.getSpecialty());
+
+        List<TotalIncomeByProfessionalProjection> reservesResponse = invoiceRepository.getTotalIncomeByProfessional(idProfessional, startDate, endDate);
+
+        Integer countReservation = reservesResponse.size();
+        BigDecimal totalPrice = reservesResponse.stream()
+                .map(TotalIncomeByProfessionalProjection::getPrice)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        response.setCount(countReservation);
+        response.setTotalPrice(totalPrice);
+
+        List<ReservesByProfessional> reserves = reservesResponse.stream()
+                .map(p -> {
+                    return ReservesByProfessional.builder()
+                            .idReserve(p.getIdReserve())
+                            .dateReserve(p.getDateReserve().toLocalDate())
+                            .timeReserve(p.getDateReserve().toLocalTime())
+                            .priceReserve(p.getPrice())
+                            .statusReserve(p.getStatusReserve())
+                            .nameCustomer(p.getCustomerFullName())
+                            .dateTurn(p.getDateTurn().toLocalDate())
+                            .timeTurn(p.getDateTurn().toLocalTime())
+                            .nameService(p.getServiceName())
+                            .build();
+                })
+                .toList();
+
+        response.setReserves(reserves);
+
+        return response;
 
     }
 

@@ -1,14 +1,12 @@
 package com.app.JWTImplementation.controller;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.app.JWTImplementation.dto.ReserveDTO;
+import com.app.JWTImplementation.dto.responses.TotalIncomeByProfessional;
 import com.app.JWTImplementation.model.Reserve;
-import com.app.JWTImplementation.model.Schedule;
-import com.app.JWTImplementation.model.User;
-import com.app.JWTImplementation.service.ScheduleService;
-import com.app.JWTImplementation.service.UserService;
+import com.app.JWTImplementation.service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.app.JWTImplementation.dto.ReserveInfoDTO;
 import com.app.JWTImplementation.dto.responses.ApiResponse;
-import com.app.JWTImplementation.service.ReserveService;
 
 @RestController
 @RequestMapping("/api/reserve")
@@ -32,6 +29,7 @@ public class ReserveController {
     @Autowired private ReserveService service;
     @Autowired private UserService userService;
     @Autowired private ScheduleService scheduleService;
+    @Autowired private AdminService adminService;
 
     @GetMapping("/list-info")
     @ResponseBody
@@ -233,5 +231,25 @@ public class ReserveController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'PROFESSIONAL')")
+    @GetMapping("/total-income")
+    @ResponseBody
+    public ResponseEntity<ApiResponse<TotalIncomeByProfessional>> getTotalIncomeByProfessional(
+            @RequestParam("idProfessional") Integer idProfessional,
+            @RequestParam("startDate") LocalDate startDate,
+            @RequestParam("endDate") LocalDate endDate
+    ) {
+
+        ApiResponse<TotalIncomeByProfessional> response = new ApiResponse<>(
+                "Success",
+                "Retrived total income of reservations successfully",
+                adminService.getTotalIncomeByProfessional(idProfessional, startDate, endDate)
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
 
 }
