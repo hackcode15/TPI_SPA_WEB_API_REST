@@ -1,21 +1,16 @@
 package com.app.JWTImplementation;
 
-import java.io.InputStream;
+import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import com.app.JWTImplementation.dto.generationSchedulesDTOs.DailyScheduleDTO;
-import com.app.JWTImplementation.dto.generationSchedulesDTOs.ServiceScheduleDTO;
-import com.app.JWTImplementation.dto.generationSchedulesDTOs.TimeSlotAvailabilityDTO;
-import com.app.JWTImplementation.exceptions.ScheduleNotFoundException;
 import com.app.JWTImplementation.exceptions.ServiceSpaNotFoundException;
-import com.app.JWTImplementation.exceptions.UserNotFoundException;
 import com.app.JWTImplementation.model.*;
+
+import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -60,6 +55,9 @@ public class DataLoader implements CommandLineRunner {
         // GENERATION SCHEDULES
         //generateTestSchedulesForDemo();
 
+        // GENERATION INVOICE TEST
+        //generateInvoiceTest();
+
     }
 
     private void generateUsers() {
@@ -67,11 +65,11 @@ public class DataLoader implements CommandLineRunner {
         // Creacion de usuarios
 
         // DEVELOPER
-        User diego = User.builder()
-                .email("taysonm895@gmail.com")
-                .username("diego")
-                .password(passwordEncoder.encode("2004"))
-                .firstName("Diego Elias")
+        User vale = User.builder()
+                .email("correoinventado123@gmail.com")
+                .username("vale")
+                .password(passwordEncoder.encode("2016"))
+                .firstName("Valentina")
                 .lastName("Gomez")
                 .role(Role.DEVELOPER)
                 .build();
@@ -111,19 +109,19 @@ public class DataLoader implements CommandLineRunner {
                 .build();
 
         // CUSTOMER
-        Customer vale = Customer.builder()
-                .email("correoinventado123@gmail.com")
-                .username("vale")
-                .password(passwordEncoder.encode("2016"))
-                .firstName("Valentina Lara")
+        Customer diego = Customer.builder()
+                .email("taysonm895@gmail.com")
+                .username("diego")
+                .password(passwordEncoder.encode("2004"))
+                .firstName("Diego Elias")
                 .lastName("Gomez")
                 .role(Role.CUSTOMER)
-                .phone("3322456688")
-                .birthdate(LocalDate.of(2000, 4, 25))
+                .phone("3624105888")
+                .birthdate(LocalDate.of(2004, 8, 17))
                 .build();
 
         Customer lidia = Customer.builder()
-                .email("correonuevo123@gmail.com")
+                .email("gomezdiegoelias1@gmail.com")
                 .username("lidia")
                 .password(passwordEncoder.encode("1984"))
                 .firstName("Lidia Celeste")
@@ -296,6 +294,49 @@ public class DataLoader implements CommandLineRunner {
                 .build();
 
         repoSchedule.save(testSchedule);
+
+    }
+
+    private void generateInvoiceTest() throws JRException {
+
+        String destinationPath = "src" + File.separator +
+                "main" + File.separator +
+                "resources" + File.separator +
+                "static" + File.separator +
+                "ReportGenerated.pdf";
+
+        String filePath = "src" + File.separator +
+                "main" + File.separator +
+                "resources" + File.separator +
+                "templates" + File.separator +
+                "report" + File.separator +
+                "Report.jrxml";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("customer_fullname", "Diego Gomez");
+        parameters.put("customer_email", "gomezdiegoelias37@gmail.com");
+        parameters.put("customer_phone", "3624105888");
+        parameters.put("invoice_number", "INV-2025-B1A9D755");
+        //parameters.put("invoice_issue_date", new Date(2025, 8, 15));
+        parameters.put("invoice_issue_date", formatter.format(LocalDateTime.now()));
+        parameters.put("payment_method", "Tarjeta de credito");
+        parameters.put("total_paid", new BigDecimal(20000));
+        parameters.put("reserve_id", 1);
+        parameters.put("service_name", "Anti-Stress");
+        parameters.put("subtotal",  new BigDecimal(15000));
+        parameters.put("tax_amount",  new BigDecimal(5000));
+        parameters.put("total",  new BigDecimal(20000));
+        parameters.put("imageDir", "classpath:/static/images/");
+
+        JasperReport report = JasperCompileManager.compileReport(filePath);
+        JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+        JasperExportManager.exportReportToPdfFile(print, destinationPath);
+
+        System.out.println("Report created successfully");
+
+        //return "Report created successfully";
 
     }
 

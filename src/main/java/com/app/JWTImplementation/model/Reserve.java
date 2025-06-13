@@ -60,6 +60,8 @@ public class Reserve {
         return this.schedule.getService();
     }
 
+    public Customer getCustomer() { return this.user.asCustomer(); }
+
     public enum StatusReserve {
         CONFIRMED,
         CANCELLED,

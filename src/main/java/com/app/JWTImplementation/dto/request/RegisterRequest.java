@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -32,5 +34,10 @@ public class RegisterRequest {
     
     @Size(min = 4, max = 45, message = "Last Name must be between 4 and 45 characters") 
     private String lastName;
+
+    @NotBlank
+    private String phone;
+
+    private LocalDate birthdate;
 
 }

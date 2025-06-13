@@ -2,14 +2,16 @@ package com.app.JWTImplementation.service;
 
 import java.time.LocalDateTime;
 
-import com.app.JWTImplementation.dto.EmailDTO;
+import com.app.JWTImplementation.dto.EmailRegisterDTO;
 import com.app.JWTImplementation.exceptions.UserNotFoundException;
+import com.app.JWTImplementation.model.Customer;
+import com.app.JWTImplementation.repository.CustomerRepository;
 import jakarta.mail.MessagingException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,12 +23,16 @@ import com.app.JWTImplementation.model.User;
 import com.app.JWTImplementation.model.User.Role;
 import com.app.JWTImplementation.repository.UserRepository;
 import com.app.JWTImplementation.service.impl.IAuthService;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService implements IAuthService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -72,9 +78,10 @@ public class AuthService implements IAuthService {
     }
 
     @Override
+    @Transactional
     public AuthResponse register(RegisterRequest request) throws MessagingException {
 
-        User user = User.builder()
+        /*User user = User.builder()
                 .email(request.getEmail())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
@@ -84,7 +91,33 @@ public class AuthService implements IAuthService {
                 .role(Role.CUSTOMER)
                 .build();
 
-        userRepository.save(user);
+        userRepository.save(user);*/
+
+        // GUARDAR TAMBIEN EN CUSTOMER
+
+        /*Customer customer = new Customer();
+
+        // Copia los datos de user a customer
+        BeanUtils.copyProperties(user, customer);
+
+        customer.setPhone(request.getPhone());
+        customer.setBirthdate(request.getBirthdate());
+
+        customerRepository.save(customer)*/;
+
+        Customer user = Customer.builder()
+                .email(request.getEmail())
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .createAt(LocalDateTime.now())
+                .phone(request.getPhone())
+                .birthdate(request.getBirthdate())
+                .role(Role.CUSTOMER)
+                .build();
+
+        customerRepository.save(user);
 
         String token = jwtService.getToken(user, user.getId());
 
@@ -99,7 +132,7 @@ public class AuthService implements IAuthService {
         // Envío asíncrono del correo para que no bloquee la respuesta al usuario
         taskExecutor.execute(() -> {
             try {
-                EmailDTO email = EmailDTO.builder()
+                EmailRegisterDTO email = EmailRegisterDTO.builder()
                         .addressee(user.getEmail())
                         .subjet("¡Tu cuenta ha sido creada! | SPA SENTIRSE BIEN")
                         .message(user.getFirstName() + ", " + user.getLastName())
@@ -114,10 +147,10 @@ public class AuthService implements IAuthService {
         return AuthResponse.builder()
                 .status("Success")
                 .message("User successfully registered")
-                .idUser(user.getId()) // nuevo -> obtener el id
+                .idUser(user.getId())
                 .email(user.getEmail())
-                .username(user.getUsername()) // nuevo -> obtener el username
-                //.token(jwtService.getToken(user))
+                .username(user.getUsername())
+                .rol(user.getRole().name())
                 .token(token)
                 .build();
 
