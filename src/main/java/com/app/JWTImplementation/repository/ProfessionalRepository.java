@@ -21,7 +21,7 @@ public interface ProfessionalRepository extends JpaRepository<Professional, Inte
         u.username as username,
         u.password as password,
         u.firstName as firstName,
-        u.lastName as LastName,
+        u.lastName as lastName,
         p.specialty as specialty,
         p.license as license,
         p.photoUrl as photoUrl,
