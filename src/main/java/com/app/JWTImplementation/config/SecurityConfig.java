@@ -53,7 +53,8 @@ public class SecurityConfig {
                             // endpoints propios
                             "/api/availability/**",
                             "/api/service-spa/**",
-                            "/api/schedule/**"
+                            "/api/schedule/**",
+                            "/api/professional/list"
                     ).permitAll();
 
                     // ░░░░░░░░░░░░░░░░░░░¿DONDE VEO LAS OTRAS CONFIGURACIONES?░░░░░░░░░░░░░░░░░░

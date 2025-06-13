@@ -14,6 +14,7 @@ import com.app.JWTImplementation.repository.CustomerRepository;
 import com.app.JWTImplementation.repository.InvoiceRepository;
 import com.app.JWTImplementation.repository.ReserveRepository;
 import com.app.JWTImplementation.service.impl.IInvoiceService;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
@@ -238,7 +239,7 @@ public class InvoiceService implements IInvoiceService {
     }*/
 
     // metodo para generar y enviar la factura por correo - uso en produccion
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    /*@Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void generateAndSendInvoice(Integer idReserve) {
         taskExecutor.execute(() -> {
             try {
@@ -260,6 +261,34 @@ public class InvoiceService implements IInvoiceService {
 
             } catch (Exception e) {
                 System.out.println("Error al enviar factura para reserva " + idReserve);
+            }
+        });
+    }*/
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void generateAndSendInvoice(Integer idReserve) {
+        taskExecutor.execute(() -> {
+            try {
+                InvoiceProjection invoiceProjection = invoiceRepository.findByReserveId(idReserve)
+                        .orElseThrow(() -> new ReserveNotFoundException(idReserve));
+
+                System.out.println("Generando PDF para reserva: {}" + idReserve);
+                byte[] pdfBytes = generateInvoicePDF(invoiceProjection);
+                System.out.println("PDF generado correctamente, tamaño: {} bytes" + pdfBytes.length);
+
+                EmailInvoiceDTO emailDTO = EmailInvoiceDTO.builder()
+                        .addressee(invoiceProjection.getCustomerEmail())
+                        .customerName(invoiceProjection.getCustomerName())
+                        .pdfAttachment(pdfBytes)
+                        .build();
+
+                System.out.println("Enviando email a: {}" + invoiceProjection.getCustomerEmail());
+                emailService.sendInvoiceEmail(emailDTO);
+                System.out.println("Email enviado correctamente");
+
+            } catch (Exception e) {
+                System.out.println("Error al enviar factura para reserva " + idReserve + e);
+                // Opcional: Registrar el fallo en la base de datos
             }
         });
     }

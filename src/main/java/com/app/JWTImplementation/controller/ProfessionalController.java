@@ -23,7 +23,6 @@ public class ProfessionalController {
 
     @GetMapping("/list")
     @ResponseBody
-    //@PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ProfessionalResponseDTO>>> getAllProfessional(){
         ApiResponse<List<ProfessionalResponseDTO>> response = new ApiResponse<>(
                 "Success",
