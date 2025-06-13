@@ -264,7 +264,7 @@ public class InvoiceService implements IInvoiceService {
         });
     }
 
-    private byte[] generateInvoicePDF(InvoiceProjection details) throws JRException {
+    /*private byte[] generateInvoicePDF(InvoiceProjection details) throws JRException {
 
         String destinationPath = "src" + File.separator +
                 "main" + File.separator +
@@ -304,17 +304,51 @@ public class InvoiceService implements IInvoiceService {
         parameters.put("total", details.getTotal());
         parameters.put("imageDir", "classpath:/static/images/");
 
-        /*String templatePath = "classpath:templates/report/Report.jrxml";
-        InputStream templateStream = getClass().getResourceAsStream("/templates/report/Report.jrxml");
-        JasperReport report = JasperCompileManager.compileReport(templateStream);
-        JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
-        return JasperExportManager.exportReportToPdf(print);*/
-
         JasperReport report = JasperCompileManager.compileReport(filePath);
         JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
 
         return JasperExportManager.exportReportToPdf(print);
 
+    }*/
+
+    private byte[] generateInvoicePDF(InvoiceProjection details) throws JRException {
+        // Usa ClassLoader para cargar el template desde recursos
+        InputStream templateStream = getClass().getClassLoader()
+                .getResourceAsStream("templates/report/Report.jrxml");
+
+        if (templateStream == null) {
+            throw new RuntimeException("No se pudo cargar el template de la factura");
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+        String paymentMethod = switch (details.getPaymentMethod()) {
+            case "CASH" -> "Efectivo";
+            case "CREDIT_CARD" -> "Tarjeta de credito";
+            case "DEBIT_CARD" -> "Tarjeta de debito";
+            case "BANK_TRANSFER" -> "Transferencia bancaria";
+            default -> "OTHER";
+        };
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("customer_fullname", details.getCustomerName());
+        parameters.put("customer_email", details.getCustomerEmail());
+        parameters.put("customer_phone", details.getCustomerIdentification());
+        parameters.put("invoice_number", details.getInvoiceNumber());
+        parameters.put("invoice_issue_date", formatter.format(details.getIssueDate()));
+        parameters.put("payment_method", paymentMethod);
+        parameters.put("total_paid", details.getTotal());
+        parameters.put("reserve_id", details.getReserveId());
+        parameters.put("service_name", details.getServiceName());
+        parameters.put("subtotal", details.getSubtotal());
+        parameters.put("tax_amount", details.getTaxAmount());
+        parameters.put("total", details.getTotal());
+        parameters.put("imageDir", "classpath:/static/images/");
+
+        JasperReport report = JasperCompileManager.compileReport(templateStream);
+        JasperPrint print = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+
+        return JasperExportManager.exportReportToPdf(print);
     }
 
 }
